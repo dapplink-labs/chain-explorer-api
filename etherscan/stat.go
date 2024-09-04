@@ -1,13 +1,16 @@
 package etherscan
 
-import "github.com/dapplink-labs/chain-explorer-api/etherscan/common"
+import (
+	"github.com/dapplink-labs/chain-explorer-api/common"
+	"github.com/dapplink-labs/chain-explorer-api/etherscan/base"
+)
 
 func (c *Client) EtherTotalSupply() (totalSupply *common.BigInt, err error) {
 	err = c.call("stats", "ethsupply", nil, &totalSupply)
 	return
 }
 
-func (c *Client) EtherLatestPrice() (price common.LatestPrice, err error) {
+func (c *Client) EtherLatestPrice() (price base.LatestPrice, err error) {
 	err = c.call("stats", "ethprice", nil, &price)
 	return
 }

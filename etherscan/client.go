@@ -10,7 +10,8 @@ import (
 	"net/url"
 	"time"
 
-	"github.com/dapplink-labs/chain-explorer-api/etherscan/common"
+	"github.com/dapplink-labs/chain-explorer-api/common"
+	"github.com/dapplink-labs/chain-explorer-api/etherscan/base"
 )
 
 type Client struct {
@@ -22,7 +23,7 @@ type Client struct {
 	AfterRequest  func(module, action string, param map[string]interface{}, outcome interface{}, requestErr error)
 }
 
-func New(network common.Network, APIKey string) *Client {
+func New(network base.Network, APIKey string) *Client {
 	return NewCustomized(Customization{
 		Timeout: 30 * time.Second,
 		Key:     APIKey,
@@ -130,7 +131,7 @@ func (c *Client) call(module, action string, param map[string]interface{}, outco
 		return
 	}
 
-	var envelope common.Envelope
+	var envelope base.Envelope
 	err = json.Unmarshal(content.Bytes(), &envelope)
 	if err != nil {
 		err = common.WrapErr(err, "json unmarshal envelope")

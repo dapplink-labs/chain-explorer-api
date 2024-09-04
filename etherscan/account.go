@@ -3,7 +3,8 @@ package etherscan
 import (
 	"strings"
 
-	"github.com/dapplink-labs/chain-explorer-api/etherscan/common"
+	"github.com/dapplink-labs/chain-explorer-api/common"
+	"github.com/dapplink-labs/chain-explorer-api/etherscan/base"
 )
 
 func (c *Client) AccountBalance(address string) (balance *common.BigInt, err error) {
@@ -16,17 +17,17 @@ func (c *Client) AccountBalance(address string) (balance *common.BigInt, err err
 	return
 }
 
-func (c *Client) MultiAccountBalance(addresses ...string) (balances []common.AccountBalance, err error) {
+func (c *Client) MultiAccountBalance(addresses ...string) (balances []base.AccountBalance, err error) {
 	param := common.M{
 		"tag":     "latest",
 		"address": addresses,
 	}
-	balances = make([]common.AccountBalance, 0, len(addresses))
+	balances = make([]base.AccountBalance, 0, len(addresses))
 	err = c.call("account", "balancemulti", param, &balances)
 	return
 }
 
-func (c *Client) NormalTxByAddress(address string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []common.NormalTx, err error) {
+func (c *Client) NormalTxByAddress(address string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []base.NormalTx, err error) {
 	param := common.M{
 		"address": address,
 		"page":    page,
@@ -39,12 +40,11 @@ func (c *Client) NormalTxByAddress(address string, startBlock *int, endBlock *in
 	} else {
 		param["sort"] = "asc"
 	}
-
 	err = c.call("account", "txlist", param, &txs)
 	return
 }
 
-func (c *Client) InternalTxByAddress(address string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []common.InternalTx, err error) {
+func (c *Client) InternalTxByAddress(address string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []base.InternalTx, err error) {
 	param := common.M{
 		"address": address,
 		"page":    page,
@@ -57,12 +57,11 @@ func (c *Client) InternalTxByAddress(address string, startBlock *int, endBlock *
 	} else {
 		param["sort"] = "asc"
 	}
-
 	err = c.call("account", "txlistinternal", param, &txs)
 	return
 }
 
-func (c *Client) ERC20Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []common.ERC20Transfer, err error) {
+func (c *Client) ERC20Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []base.ERC20Transfer, err error) {
 	param := common.M{
 		"page":   page,
 		"offset": offset,
@@ -82,7 +81,7 @@ func (c *Client) ERC20Transfers(contractAddress, address *string, startBlock *in
 	return
 }
 
-func (c *Client) ERC721Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []common.ERC721Transfer, err error) {
+func (c *Client) ERC721Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []base.ERC721Transfer, err error) {
 	param := common.M{
 		"page":   page,
 		"offset": offset,
@@ -102,7 +101,7 @@ func (c *Client) ERC721Transfers(contractAddress, address *string, startBlock *i
 	return
 }
 
-func (c *Client) ERC1155Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []common.ERC1155Transfer, err error) {
+func (c *Client) ERC1155Transfers(contractAddress, address *string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []base.ERC1155Transfer, err error) {
 	param := common.M{
 		"page":   page,
 		"offset": offset,
@@ -122,7 +121,7 @@ func (c *Client) ERC1155Transfers(contractAddress, address *string, startBlock *
 	return
 }
 
-func (c *Client) SwapTransactions(address string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []common.SwapTransaction, err error) {
+func (c *Client) SwapTransactions(address string, startBlock *int, endBlock *int, page int, offset int, desc bool) (txs []base.SwapTransaction, err error) {
 	param := common.M{
 		"page":   page,
 		"offset": offset,
@@ -136,7 +135,7 @@ func (c *Client) SwapTransactions(address string, startBlock *int, endBlock *int
 		param["sort"] = "asc"
 	}
 	err = c.call("account", "txlist", param, &txs)
-	var txList []common.SwapTransaction
+	var txList []base.SwapTransaction
 	for _, tx := range txs {
 		if tx.MethodId != "0x" && strings.ContainsAny(tx.FunctionName, "execute") {
 			txList = append(txList, tx)
@@ -145,7 +144,7 @@ func (c *Client) SwapTransactions(address string, startBlock *int, endBlock *int
 	return txList, nil
 }
 
-func (c *Client) BlocksMinedByAddress(address string, page int, offset int) (mined []common.MinedBlock, err error) {
+func (c *Client) BlocksMinedByAddress(address string, page int, offset int) (mined []base.MinedBlock, err error) {
 	param := common.M{
 		"address":   address,
 		"blocktype": "blocks",
@@ -157,7 +156,7 @@ func (c *Client) BlocksMinedByAddress(address string, page int, offset int) (min
 	return
 }
 
-func (c *Client) UnclesMinedByAddress(address string, page int, offset int) (mined []common.MinedBlock, err error) {
+func (c *Client) UnclesMinedByAddress(address string, page int, offset int) (mined []base.MinedBlock, err error) {
 	param := common.M{
 		"address":   address,
 		"blocktype": "uncles",

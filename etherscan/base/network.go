@@ -1,4 +1,4 @@
-package common
+package base
 
 const (
 	Mainnet  Network = "api"

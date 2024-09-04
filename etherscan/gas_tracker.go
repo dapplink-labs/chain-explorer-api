@@ -3,7 +3,8 @@ package etherscan
 import (
 	"time"
 
-	"github.com/dapplink-labs/chain-explorer-api/etherscan/common"
+	"github.com/dapplink-labs/chain-explorer-api/common"
+	"github.com/dapplink-labs/chain-explorer-api/etherscan/base"
 )
 
 func (c *Client) GasEstimate(gasPrice int) (confirmationTimeInSec time.Duration, err error) {
@@ -16,7 +17,7 @@ func (c *Client) GasEstimate(gasPrice int) (confirmationTimeInSec time.Duration,
 	return time.ParseDuration(confTime + "s")
 }
 
-func (c *Client) GasOracle() (gasPrices common.GasPrices, err error) {
+func (c *Client) GasOracle() (gasPrices base.GasPrices, err error) {
 	err = c.call("gastracker", "gasoracle", common.M{}, &gasPrices)
 	return
 }

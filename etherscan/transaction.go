@@ -3,12 +3,13 @@ package etherscan
 import (
 	"errors"
 
-	"github.com/dapplink-labs/chain-explorer-api/etherscan/common"
+	"github.com/dapplink-labs/chain-explorer-api/common"
+	"github.com/dapplink-labs/chain-explorer-api/etherscan/base"
 )
 
 var ErrPreByzantiumTx = errors.New("pre-byzantium transaction does not support receipt status check")
 
-func (c *Client) ExecutionStatus(txHash string) (status common.ExecutionStatus, err error) {
+func (c *Client) ExecutionStatus(txHash string) (status base.ExecutionStatus, err error) {
 	param := common.M{
 		"txhash": txHash,
 	}

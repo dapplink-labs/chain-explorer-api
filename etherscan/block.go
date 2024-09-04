@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/dapplink-labs/chain-explorer-api/etherscan/common"
+	"github.com/dapplink-labs/chain-explorer-api/common"
+	"github.com/dapplink-labs/chain-explorer-api/etherscan/base"
 )
 
-func (c *Client) BlockReward(blockNum int) (rewards common.BlockRewards, err error) {
+func (c *Client) BlockReward(blockNum int) (rewards base.BlockRewards, err error) {
 	param := common.M{
 		"blockno": blockNum,
 	}

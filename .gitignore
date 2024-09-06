@@ -15,3 +15,4 @@
 *.out
 coverage.txt
 .idea
+oklink-config.yml

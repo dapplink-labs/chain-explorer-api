@@ -8,4 +8,6 @@ import (
 type ChainExplorerAdaptor interface {
 	GetChainExplorer(req *chain.SupportChainExplorerRequest) (*chain.SupportChainExplorerResponse, error)
 	GetAccountBalance(req *account.AccountBalanceRequest) (*account.AccountBalanceResponse, error)
+	GetMultiAccountBalance(req *account.AccountBalanceRequest) ([]account.AccountBalanceResponse, error)
+	GetTxByAddress(request *account.AccountTxRequest) (*account.AccountTxResponse, error)
 }

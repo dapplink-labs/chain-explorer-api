@@ -1,4 +1,4 @@
-package etherscan
+package base
 
 import (
 	"bytes"
@@ -11,65 +11,71 @@ import (
 	"time"
 
 	"github.com/dapplink-labs/chain-explorer-api/common"
-	"github.com/dapplink-labs/chain-explorer-api/etherscan/base"
 )
 
-type Client struct {
+type Envelope struct {
+	Status  int             `json:"status,string"`
+	Message string          `json:"message"`
+	Result  json.RawMessage `json:"result"`
+}
+
+type BaseClient struct {
 	coon          *http.Client
 	key           string
 	baseURL       string
 	Verbose       bool
-	BeforeRequest func(module, action string, param map[string]interface{}) error
-	AfterRequest  func(module, action string, param map[string]interface{}, outcome interface{}, requestErr error)
+	BeforeRequest func(name, module, action string, param map[string]interface{}) error
+	AfterRequest  func(name, module, action string, param map[string]interface{}, outcome interface{}, requestErr error)
 }
 
-func New(network base.Network, APIKey string) *Client {
-	return NewCustomized(Customization{
-		Timeout: 30 * time.Second,
-		Key:     APIKey,
-		BaseURL: fmt.Sprintf(`https://%s.etherscan.io/api?`, network.SubDomain()),
+func NewBaseClient(apiKey string, baseUrl string, verbose bool, timeout time.Duration) *BaseClient {
+	return NewCustomizedClient(CustomizationClient{
+		Timeout: timeout,
+		Key:     apiKey,
+		BaseURL: baseUrl,
+		Verbose: verbose,
 	})
 }
 
-type Customization struct {
+type CustomizationClient struct {
 	Timeout       time.Duration
 	Key           string
 	BaseURL       string
 	Verbose       bool
 	Client        *http.Client
-	BeforeRequest func(module, action string, param map[string]interface{}) error
-	AfterRequest  func(module, action string, param map[string]interface{}, outcome interface{}, requestErr error)
+	BeforeRequest func(name, module, action string, param map[string]interface{}) error
+	AfterRequest  func(name, module, action string, param map[string]interface{}, outcome interface{}, requestErr error)
 }
 
-func NewCustomized(config Customization) *Client {
+func NewCustomizedClient(cc CustomizationClient) *BaseClient {
 	var httpClient *http.Client
-	if config.Client != nil {
-		httpClient = config.Client
+	if cc.Client != nil {
+		httpClient = cc.Client
 	} else {
 		httpClient = &http.Client{
-			Timeout: config.Timeout,
+			Timeout: cc.Timeout,
 		}
 	}
-	return &Client{
+	return &BaseClient{
 		coon:          httpClient,
-		key:           config.Key,
-		baseURL:       config.BaseURL,
-		Verbose:       config.Verbose,
-		BeforeRequest: config.BeforeRequest,
-		AfterRequest:  config.AfterRequest,
+		key:           cc.Key,
+		baseURL:       cc.BaseURL,
+		Verbose:       cc.Verbose,
+		BeforeRequest: cc.BeforeRequest,
+		AfterRequest:  cc.AfterRequest,
 	}
 }
 
-func (c *Client) call(module, action string, param map[string]interface{}, outcome interface{}) (err error) {
-	if c.BeforeRequest != nil {
-		err = c.BeforeRequest(module, action, param)
+func (bc *BaseClient) Call(name, module, action string, param map[string]interface{}, outcome interface{}) (err error) {
+	if bc.BeforeRequest != nil {
+		err = bc.BeforeRequest(name, module, action, param)
 		if err != nil {
 			err = common.WrapErr(err, "beforeRequest")
 			return
 		}
 	}
-	if c.AfterRequest != nil {
-		defer c.AfterRequest(module, action, param, outcome, err)
+	if bc.AfterRequest != nil {
+		defer bc.AfterRequest(name, module, action, param, outcome, err)
 	}
 
 	defer func() {
@@ -78,22 +84,22 @@ func (c *Client) call(module, action string, param map[string]interface{}, outco
 		}
 	}()
 
-	req, err := http.NewRequest(http.MethodGet, c.craftURL(module, action, param), http.NoBody)
+	req, err := http.NewRequest(http.MethodGet, bc.CraftURL(module, action, param), http.NoBody)
 	if err != nil {
 		err = common.WrapErr(err, "http.NewRequest")
 		return
 	}
-	req.Header.Set("User-Agent", "etherscan-api(Go)")
+
+	req.Header.Set("User-Agent", "DappLinkOpenSource")
 	req.Header.Set("Content-Type", "application/json; charset=utf-8")
 
-	if c.Verbose {
+	if bc.Verbose {
 		var reqDump []byte
 		reqDump, err = httputil.DumpRequestOut(req, false)
 		if err != nil {
 			err = common.WrapErr(err, "verbose mode req dump failed")
 			return
 		}
-
 		fmt.Printf("\n%s\n", reqDump)
 		defer func() {
 			if err != nil {
@@ -102,14 +108,14 @@ func (c *Client) call(module, action string, param map[string]interface{}, outco
 		}()
 	}
 
-	res, err := c.coon.Do(req)
+	res, err := bc.coon.Do(req)
 	if err != nil {
 		err = common.WrapErr(err, "sending request")
 		return
 	}
 	defer res.Body.Close()
 
-	if c.Verbose {
+	if bc.Verbose {
 		var resDump []byte
 		resDump, err = httputil.DumpResponse(res, true)
 		if err != nil {
@@ -131,7 +137,7 @@ func (c *Client) call(module, action string, param map[string]interface{}, outco
 		return
 	}
 
-	var envelope base.Envelope
+	var envelope Envelope
 	err = json.Unmarshal(content.Bytes(), &envelope)
 	if err != nil {
 		err = common.WrapErr(err, "json unmarshal envelope")
@@ -142,7 +148,8 @@ func (c *Client) call(module, action string, param map[string]interface{}, outco
 		return
 	}
 
-	if action == "tokentx" {
+	// only for etherscan handle
+	if name == "etherscan" && action == "tokentx" {
 		err = json.Unmarshal(bytes.Replace(envelope.Result, []byte(`"tokenDecimal":""`), []byte(`"tokenDecimal":"0"`), -1), outcome)
 	} else {
 		err = json.Unmarshal(envelope.Result, outcome)
@@ -151,21 +158,20 @@ func (c *Client) call(module, action string, param map[string]interface{}, outco
 		err = common.WrapErr(err, "json unmarshal outcome")
 		return
 	}
-
 	return
 }
 
-func (c *Client) craftURL(module, action string, param map[string]interface{}) (URL string) {
+func (bc *BaseClient) CraftURL(module, action string, param map[string]interface{}) (URL string) {
 	q := url.Values{
 		"module": []string{module},
 		"action": []string{action},
-		"apikey": []string{c.key},
+		"apikey": []string{bc.key},
 	}
 
 	for k, v := range param {
 		q[k] = common.ExtractValue(v)
 	}
 
-	URL = c.baseURL + q.Encode()
+	URL = bc.baseURL + q.Encode()
 	return
 }

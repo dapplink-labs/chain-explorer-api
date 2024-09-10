@@ -7,7 +7,9 @@ type GasEstimateFeeRequest struct {
 }
 
 type GasEstimateFeeResponse struct {
-	ChainName             string `json:"chainName"`
+	ChainFullName         string `json:"chainFullName"`
+	ChainShortName        string `json:"chainShortName"`
+	Symbol                string `json:"symbol"`
 	BestTransactionFee    string `json:"bestTransactionFee"`
 	BestTransactionFeeSat string `json:"bestTransactionFeeSat"`
 	RecommendedGasPrice   string `json:"recommendedGasPrice"`

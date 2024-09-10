@@ -9,7 +9,7 @@ func (cea *ChainExplorerAdaptor) GetEstimateGasFee(request *gas_fee.GasEstimateF
 	apiUrl := fmt.Sprintf("api/v5/explorer/blockchain/fee?chainShortName=%s", request.ChainShortName)
 	resp := &gas_fee.GasEstimateFeeResponse{}
 
-	err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, resp)
+	err := cea.baseClient.Call(ChainExplorerName, "", "", apiUrl, nil, resp)
 
 	if err != nil {
 		return nil, err

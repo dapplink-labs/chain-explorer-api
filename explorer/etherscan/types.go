@@ -1,5 +1,12 @@
 package etherscan
 
+import "github.com/dapplink-labs/chain-explorer-api/common"
+
+type AccountBalance struct {
+	Account string         `json:"account"`
+	Balance *common.BigInt `json:"balance"`
+}
+
 type ApiResponse[T any] struct {
 	Status  string `json:"status"`
 	Message string `json:"message"`

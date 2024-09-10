@@ -116,10 +116,10 @@ func (cea *ChainExplorerDispatcher) GetAccountBalance(request *account.AccountBa
 	return cea.RegistryExplorer[request.ExplorerName].GetAccountBalance(request)
 }
 
-func (cea *ChainExplorerDispatcher) GetMultiAccountBalance(request *account.AccountBalanceRequest) ([]account.AccountBalanceResponse, error) {
+func (cea *ChainExplorerDispatcher) GetMultiAccountBalance(request *account.AccountBalanceRequest) ([]*account.AccountBalanceResponse, error) {
 	resp := cea.preHandler(request)
 	if resp != nil {
-		return []account.AccountBalanceResponse{}, nil
+		return []*account.AccountBalanceResponse{}, nil
 	}
 	return cea.RegistryExplorer[request.ExplorerName].GetMultiAccountBalance(request)
 }

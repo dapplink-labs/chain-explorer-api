@@ -12,7 +12,7 @@ type ChainExplorerAdaptor interface {
 	// GetChainExplorer account
 	GetChainExplorer(req *chain.SupportChainExplorerRequest) (*chain.SupportChainExplorerResponse, error)
 	GetAccountBalance(req *account.AccountBalanceRequest) (*account.AccountBalanceResponse, error)
-	GetMultiAccountBalance(req *account.AccountBalanceRequest) ([]account.AccountBalanceResponse, error)
+	GetMultiAccountBalance(req *account.AccountBalanceRequest) ([]*account.AccountBalanceResponse, error)
 	GetAccountUtxo(req *account.AccountUtxoRequest) (*account.AccountUtxoResponse, error)
 	GetTxByAddress(request *account.AccountTxRequest) (*account.AccountTxResponse, error)
 

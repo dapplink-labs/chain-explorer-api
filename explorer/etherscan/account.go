@@ -18,6 +18,7 @@ func (cea *ChainExplorerAdaptor) GetAccountBalance(req *account.AccountBalanceRe
 		err := cea.baseClient.Call("etherscan", "account", "balance", "", param, balance)
 		if err != nil {
 			fmt.Println("err", err)
+			return &account.AccountBalanceResponse{}, nil
 		}
 	} else {
 		param := common.M{
@@ -39,17 +40,33 @@ func (cea *ChainExplorerAdaptor) GetAccountBalance(req *account.AccountBalanceRe
 	}, nil
 }
 
-func (cea *ChainExplorerAdaptor) GetMultiAccountBalance(req *account.AccountBalanceRequest) ([]account.AccountBalanceResponse, error) {
-	param := common.M{
-		"tag":     "latest",
-		"address": req.Account,
+func (cea *ChainExplorerAdaptor) GetMultiAccountBalance(req *account.AccountBalanceRequest) ([]*account.AccountBalanceResponse, error) {
+	var abrList []*account.AccountBalanceResponse
+	if req.ContractAddress[0] == "0x00" {
+		param := common.M{
+			"tag":     "latest",
+			"address": req.Account,
+		}
+		balances := make([]AccountBalance, 0, len(req.Account))
+		err := cea.baseClient.Call("etherscan", "account", "balancemulti", "", param, &balances)
+		if err != nil {
+			fmt.Println("err", err)
+			return []*account.AccountBalanceResponse{}, nil
+		}
+		for _, balance := range balances {
+			abr := &account.AccountBalanceResponse{
+				Account:         balance.Account,
+				Balance:         balance.Balance,
+				Symbol:          "ETH",
+				ContractAddress: "0x0",
+				TokenId:         "0x0",
+			}
+			abrList = append(abrList, abr)
+		}
+	} else {
+		return []*account.AccountBalanceResponse{}, nil
 	}
-	balances := make([]account.AccountBalanceResponse, 0, len(req.Account))
-	err := cea.baseClient.Call("etherscan", "account", "balancemulti", "", param, &balances)
-	if err != nil {
-		fmt.Println("err", err)
-	}
-	return balances, nil
+	return abrList, nil
 }
 
 // GetAccountUtxo etherscan can not support this function, so return empty struct

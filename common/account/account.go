@@ -3,13 +3,22 @@ package account
 import "github.com/dapplink-labs/chain-explorer-api/common"
 
 type AccountBalanceRequest struct {
-	ExplorerName string   `json:"explorerName"`
-	Account      []string `json:"account"`
+	ChainShortName  string   `json:"chainShortName"`
+	ExplorerName    string   `json:"explorerName"`
+	Account         []string `json:"account"`
+	Symbol          []string `json:"symbol"`
+	ContractAddress []string `json:"contractAddress"`
+	ProtocolType    []string `json:"protocolType"` // 20代币：token_20; 721代币：token_721; 1155代币：token_1155;
+	Page            []string `json:"page"`
+	Limit           []string `json:"limit"`
 }
 
 type AccountBalanceResponse struct {
-	Account string         `json:"account"`
-	Balance *common.BigInt `json:"balance"`
+	Account         string         `json:"account"`
+	Balance         *common.BigInt `json:"balance"`
+	Symbol          string         `json:"symbol"`
+	ContractAddress string         `json:"contractAddress"`
+	TokenId         string         `json:"token_id"`
 }
 
 type AccountUtxoRequest struct {

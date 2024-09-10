@@ -9,18 +9,33 @@ import (
 )
 
 func (cea *ChainExplorerAdaptor) GetAccountBalance(req *account.AccountBalanceRequest) (*account.AccountBalanceResponse, error) {
-	param := common.M{
-		"tag":     "latest",
-		"address": req.Account,
-	}
 	balance := new(common.BigInt)
-	err := cea.baseClient.Call("etherscan", "account", "balance", "", param, balance)
-	if err != nil {
-		fmt.Println("err", err)
+	if req.ContractAddress[0] == "0x00" {
+		param := common.M{
+			"tag":     "latest",
+			"address": req.Account[0],
+		}
+		err := cea.baseClient.Call("etherscan", "account", "balance", "", param, balance)
+		if err != nil {
+			fmt.Println("err", err)
+		}
+	} else {
+		param := common.M{
+			"contractaddress": req.ContractAddress[0],
+			"address":         req.Account[0],
+			"tag":             "latest",
+		}
+		err := cea.baseClient.Call("etherscan", "account", "tokenbalance", "", param, &balance)
+		if err != nil {
+			fmt.Println("err", err)
+		}
 	}
 	return &account.AccountBalanceResponse{
-		Account: req.Account[0],
-		Balance: balance,
+		Account:         req.Account[0],
+		Balance:         balance,
+		Symbol:          req.Symbol[0],
+		ContractAddress: req.ContractAddress[0],
+		TokenId:         "0x0",
 	}, nil
 }
 

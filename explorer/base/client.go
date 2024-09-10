@@ -66,7 +66,7 @@ func NewCustomizedClient(cc CustomizationClient) *BaseClient {
 	}
 }
 
-func (bc *BaseClient) Call(name, module, action string, param map[string]interface{}, outcome interface{}) (err error) {
+func (bc *BaseClient) Call(name, module, action, apiUrl string, param map[string]interface{}, outcome interface{}) (err error) {
 	if bc.BeforeRequest != nil {
 		err = bc.BeforeRequest(name, module, action, param)
 		if err != nil {
@@ -84,14 +84,27 @@ func (bc *BaseClient) Call(name, module, action string, param map[string]interfa
 		}
 	}()
 
-	req, err := http.NewRequest(http.MethodGet, bc.CraftURL(module, action, param), http.NoBody)
-	if err != nil {
-		err = common.WrapErr(err, "http.NewRequest")
-		return
+	var req *http.Request
+	var httpErr error
+
+	if name == "etherscan" {
+		req, httpErr = http.NewRequest(http.MethodGet, bc.CraftEtherScanURL(module, action, param), http.NoBody)
+		if httpErr != nil {
+			err = common.WrapErr(httpErr, "http.NewRequest")
+			return
+		}
+		req.Header.Set("User-Agent", "DappLinkOpenSource")
+		req.Header.Set("Content-Type", "application/json; charset=utf-8")
 	}
 
-	req.Header.Set("User-Agent", "DappLinkOpenSource")
-	req.Header.Set("Content-Type", "application/json; charset=utf-8")
+	if name == "oklink" {
+		req, httpErr = http.NewRequest(http.MethodGet, bc.CraftOkLinkURL(apiUrl), http.NoBody)
+		if httpErr != nil {
+			err = common.WrapErr(httpErr, "http.NewRequest")
+			return
+		}
+		req.Header.Set("Ok-Access-Key", bc.key)
+	}
 
 	if bc.Verbose {
 		var reqDump []byte
@@ -161,7 +174,7 @@ func (bc *BaseClient) Call(name, module, action string, param map[string]interfa
 	return
 }
 
-func (bc *BaseClient) CraftURL(module, action string, param map[string]interface{}) (URL string) {
+func (bc *BaseClient) CraftEtherScanURL(module, action string, param map[string]interface{}) (URL string) {
 	q := url.Values{
 		"module": []string{module},
 		"action": []string{action},
@@ -173,5 +186,10 @@ func (bc *BaseClient) CraftURL(module, action string, param map[string]interface
 	}
 
 	URL = bc.baseURL + q.Encode()
+	return
+}
+
+func (bc *BaseClient) CraftOkLinkURL(apiUrl string) (URL string) {
+	URL = bc.baseURL + apiUrl
 	return
 }

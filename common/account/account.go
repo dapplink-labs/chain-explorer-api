@@ -3,7 +3,7 @@ package account
 import "github.com/dapplink-labs/chain-explorer-api/common"
 
 type AccountBalanceRequest struct {
-	ExplorerName string   `json:"explorer_name"`
+	ExplorerName string   `json:"explorerName"`
 	Account      []string `json:"account"`
 }
 
@@ -12,12 +12,30 @@ type AccountBalanceResponse struct {
 	Balance *common.BigInt `json:"balance"`
 }
 
+type AccountUtxoRequest struct {
+	ExplorerName   string `json:"explorerName"`
+	ChainShortName string `json:"chainShortName"`
+	Address        string `json:"address"`
+	Page           string `json:"page"`
+	Limit          string `json:"limit"`
+}
+
+type AccountUtxoResponse struct {
+	TotalUtxo     string `json:"totalUtxo"`
+	Txid          string `json:"txid"`
+	Height        string `json:"height"`
+	BlockTime     string `json:"blockTime"`
+	Address       string `json:"address"`
+	UnspentAmount string `json:"unspentAmount"`
+	Index         string `json:"index"`
+}
+
 type AccountTxRequest struct {
-	ExplorerName string `json:"explorer_name"`
+	ExplorerName string `json:"explorerName"`
 	Action       string `json:"action"`
 	Address      string `json:"address"`
-	StartBlock   *int   `json:"start_block"`
-	EndBlock     *int   `json:"end_block"`
+	StartBlock   *int   `json:"startBlock"`
+	EndBlock     *int   `json:"endBlock"`
 	Page         int    `json:"page"`
 	Offset       int    `json:"offset"`
 	Desc         bool   `json:"desc"`

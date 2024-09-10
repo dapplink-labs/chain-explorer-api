@@ -3,7 +3,6 @@ package chainexplorerdispatcher
 import (
 	"context"
 	"fmt"
-
 	"math/big"
 	"runtime/debug"
 	"strings"
@@ -15,9 +14,9 @@ import (
 
 	"github.com/dapplink-labs/chain-explorer-api/common"
 	"github.com/dapplink-labs/chain-explorer-api/common/account"
-	"github.com/dapplink-labs/chain-explorer-api/common/block"
 	"github.com/dapplink-labs/chain-explorer-api/common/chain"
-	"github.com/dapplink-labs/chain-explorer-api/common/gas_tracker"
+	"github.com/dapplink-labs/chain-explorer-api/common/gas_fee"
+	"github.com/dapplink-labs/chain-explorer-api/common/transaction"
 	"github.com/dapplink-labs/chain-explorer-api/explorer"
 	"github.com/dapplink-labs/chain-explorer-api/explorer/etherscan"
 	"github.com/dapplink-labs/chain-explorer-api/explorer/oklink"
@@ -97,6 +96,14 @@ func (cea *ChainExplorerDispatcher) preHandler(req interface{}) (resp *CommonRep
 	return nil
 }
 
+func (cea *ChainExplorerDispatcher) GetChainExplorer(request *chain.SupportChainExplorerRequest) (*chain.SupportChainExplorerResponse, error) {
+	resp := cea.preHandler(request)
+	if resp != nil {
+		return &chain.SupportChainExplorerResponse{}, nil
+	}
+	return cea.RegistryExplorer[request.Name].GetChainExplorer(request)
+}
+
 func (cea *ChainExplorerDispatcher) GetAccountBalance(request *account.AccountBalanceRequest) (*account.AccountBalanceResponse, error) {
 	resp := cea.preHandler(request)
 	if resp != nil {
@@ -108,40 +115,42 @@ func (cea *ChainExplorerDispatcher) GetAccountBalance(request *account.AccountBa
 	return cea.RegistryExplorer[request.ExplorerName].GetAccountBalance(request)
 }
 
-func (cea *ChainExplorerDispatcher) GetBlockReward(request *block.BlockRewardRequest) (*block.BlockRewardResponse, error) {
+func (cea *ChainExplorerDispatcher) GetMultiAccountBalance(request *account.AccountBalanceRequest) ([]account.AccountBalanceResponse, error) {
 	resp := cea.preHandler(request)
 	if resp != nil {
-		return &block.BlockRewardResponse{
-			Rewards: block.BlockRewards{},
-		}, nil
+		return []account.AccountBalanceResponse{}, nil
 	}
-	return cea.RegistryExplorer[request.ExplorerName].GetBlockReward(request)
+	return cea.RegistryExplorer[request.ExplorerName].GetMultiAccountBalance(request)
 }
 
-func (cea *ChainExplorerDispatcher) GetGasEstimate(request *gas_tracker.GasEstimateRequest) (*gas_tracker.GasEstimateResponse, error) {
+func (cea *ChainExplorerDispatcher) GetAccountUtxo(request *account.AccountUtxoRequest) (*account.AccountUtxoResponse, error) {
 	resp := cea.preHandler(request)
 	if resp != nil {
-		return &gas_tracker.GasEstimateResponse{
-			ConfirmationTimes: gas_tracker.GasConfirmationTimes{
-				Slow:   time.Duration(0),
-				Medium: time.Duration(0),
-				Fast:   time.Duration(0),
-			},
-		}, nil
+		return &account.AccountUtxoResponse{}, nil
 	}
-	return cea.RegistryExplorer[request.ExplorerName].GetGasEstimate(request)
+	return cea.RegistryExplorer[request.ExplorerName].GetAccountUtxo(request)
 }
 
-func (cea *ChainExplorerDispatcher) GetGasOracle(request *gas_tracker.GasOracleRequest) (*gas_tracker.GasOracleResponse, error) {
+func (cea *ChainExplorerDispatcher) GetTxByAddress(request *account.AccountTxRequest) (*account.AccountTxResponse, error) {
 	resp := cea.preHandler(request)
 	if resp != nil {
-		return &gas_tracker.GasOracleResponse{
-			LastBlock:            0,
-			SafeGasPrice:         0,
-			ProposeGasPrice:      0,
-			FastGasPrice:         0,
-			SuggestBaseFeeInGwei: 0,
-		}, nil
+		return &account.AccountTxResponse{}, nil
 	}
-	return cea.RegistryExplorer[request.ExplorerName].GetGasOracle(request)
+	return cea.RegistryExplorer[request.ExplorerName].GetTxByAddress(request)
+}
+
+func (cea *ChainExplorerDispatcher) GetEstimateGasFee(request *gas_fee.GasEstimateFeeRequest) (*gas_fee.GasEstimateFeeResponse, error) {
+	resp := cea.preHandler(request)
+	if resp != nil {
+		return &gas_fee.GasEstimateFeeResponse{}, nil
+	}
+	return cea.RegistryExplorer[request.ExplorerName].GetEstimateGasFee(request)
+}
+
+func (cea *ChainExplorerDispatcher) GetTxByHash(request *transaction.TxRequest) (*transaction.TxResponse, error) {
+	resp := cea.preHandler(request)
+	if resp != nil {
+		return &transaction.TxResponse{}, nil
+	}
+	return cea.RegistryExplorer[request.ExplorerName].GetTxByHash(request)
 }

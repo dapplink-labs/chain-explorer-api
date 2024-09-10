@@ -21,3 +21,12 @@ type GasTrackerGasOracleResp struct {
 	SuggestBaseFee  string `json:"suggestBaseFee"`
 	GasUsedRatio    string `json:"gasUsedRatio"`
 }
+
+type TokensResp struct {
+	Symbol          string `json:"symbol"`
+	ContractAddress string `json:"ContractAddress"`
+	TokenId         string `json:"tokenId"`
+	TotalSupply     string `json:"totalSupply"` // 最大供应量
+	Divisor         string `json:"divisor"`     // 精度 默认为1
+	// Decimal              string `json:"decimal"`     // 精度 默认为1
+}

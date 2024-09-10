@@ -15,7 +15,9 @@ import (
 
 	"github.com/dapplink-labs/chain-explorer-api/common"
 	"github.com/dapplink-labs/chain-explorer-api/common/account"
+	"github.com/dapplink-labs/chain-explorer-api/common/block"
 	"github.com/dapplink-labs/chain-explorer-api/common/chain"
+	"github.com/dapplink-labs/chain-explorer-api/common/gas_tracker"
 	"github.com/dapplink-labs/chain-explorer-api/explorer"
 	"github.com/dapplink-labs/chain-explorer-api/explorer/etherscan"
 	"github.com/dapplink-labs/chain-explorer-api/explorer/oklink"
@@ -104,4 +106,42 @@ func (cea *ChainExplorerDispatcher) GetAccountBalance(request *account.AccountBa
 		}, nil
 	}
 	return cea.RegistryExplorer[request.ExplorerName].GetAccountBalance(request)
+}
+
+func (cea *ChainExplorerDispatcher) GetBlockReward(request *block.BlockRewardRequest) (*block.BlockRewardResponse, error) {
+	resp := cea.preHandler(request)
+	if resp != nil {
+		return &block.BlockRewardResponse{
+			Rewards: block.BlockRewards{},
+		}, nil
+	}
+	return cea.RegistryExplorer[request.ExplorerName].GetBlockReward(request)
+}
+
+func (cea *ChainExplorerDispatcher) GetGasEstimate(request *gas_tracker.GasEstimateRequest) (*gas_tracker.GasEstimateResponse, error) {
+	resp := cea.preHandler(request)
+	if resp != nil {
+		return &gas_tracker.GasEstimateResponse{
+			ConfirmationTimes: gas_tracker.GasConfirmationTimes{
+				Slow:   time.Duration(0),
+				Medium: time.Duration(0),
+				Fast:   time.Duration(0),
+			},
+		}, nil
+	}
+	return cea.RegistryExplorer[request.ExplorerName].GetGasEstimate(request)
+}
+
+func (cea *ChainExplorerDispatcher) GetGasOracle(request *gas_tracker.GasOracleRequest) (*gas_tracker.GasOracleResponse, error) {
+	resp := cea.preHandler(request)
+	if resp != nil {
+		return &gas_tracker.GasOracleResponse{
+			LastBlock:            0,
+			SafeGasPrice:         0,
+			ProposeGasPrice:      0,
+			FastGasPrice:         0,
+			SuggestBaseFeeInGwei: 0,
+		}, nil
+	}
+	return cea.RegistryExplorer[request.ExplorerName].GetGasOracle(request)
 }

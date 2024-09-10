@@ -19,4 +19,6 @@ type ChainExplorerAdaptor interface {
 	GetBlockAddressBalanceHistory(req *block.BlockAddressBalanceHistoryRequest) (*block.BlockAddressBalanceHistoryResponse, error)
 	GetBlockByNumber(req *block.BlockByNumberRequest) (*block.BlockByNumberResponse, error)
 	GetBlockByHash(req *block.BlockByHashRequest) (*block.BlockByHashResponse, error)
+	GetMultiAccountBalance(req *account.AccountBalanceRequest) ([]account.AccountBalanceResponse, error)
+	GetTxByAddress(request *account.AccountTxRequest) (*account.AccountTxResponse, error)
 }

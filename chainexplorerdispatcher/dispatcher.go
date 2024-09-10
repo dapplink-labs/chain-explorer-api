@@ -101,7 +101,7 @@ func (cea *ChainExplorerDispatcher) GetAccountBalance(request *account.AccountBa
 	resp := cea.preHandler(request)
 	if resp != nil {
 		return &account.AccountBalanceResponse{
-			Account: request.Account,
+			Account: request.Account[0],
 			Balance: (*common.BigInt)(big.NewInt(0)),
 		}, nil
 	}

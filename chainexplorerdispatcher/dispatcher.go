@@ -3,6 +3,7 @@ package chainexplorerdispatcher
 import (
 	"context"
 	"fmt"
+	"github.com/dapplink-labs/chain-explorer-api/common/token"
 	"math/big"
 	"runtime/debug"
 	"strings"
@@ -145,6 +146,14 @@ func (cea *ChainExplorerDispatcher) GetEstimateGasFee(request *gas_fee.GasEstima
 		return &gas_fee.GasEstimateFeeResponse{}, nil
 	}
 	return cea.RegistryExplorer[request.ExplorerName].GetEstimateGasFee(request)
+}
+
+func (cea *ChainExplorerDispatcher) GetTokenList(request *token.TokenRequest) (*token.TokenResponse, error) {
+	resp := cea.preHandler(request)
+	if resp != nil {
+		return &token.TokenResponse{}, nil
+	}
+	return cea.RegistryExplorer[request.ExplorerName].GetTokenList(request)
 }
 
 func (cea *ChainExplorerDispatcher) GetTxByHash(request *transaction.TxRequest) (*transaction.TxResponse, error) {

@@ -69,11 +69,6 @@ func (cea *ChainExplorerAdaptor) GetMultiAccountBalance(req *account.AccountBala
 	return abrList, nil
 }
 
-// GetAccountUtxo etherscan can not support this function, so return empty struct
-func (cea *ChainExplorerAdaptor) GetAccountUtxo(req *account.AccountUtxoRequest) (*account.AccountUtxoResponse, error) {
-	return &account.AccountUtxoResponse{}, nil
-}
-
 func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxRequest) (*account.TransactionResponse[account.AccountTxResponse], error) {
 	resp := &[]AddressTransactionResp{}
 

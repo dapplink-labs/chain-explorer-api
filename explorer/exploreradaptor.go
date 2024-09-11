@@ -13,11 +13,11 @@ type ChainExplorerAdaptor interface {
 	GetChainExplorer(req *chain.SupportChainExplorerRequest) (*chain.SupportChainExplorerResponse, error)
 	GetAccountBalance(req *account.AccountBalanceRequest) (*account.AccountBalanceResponse, error)
 	GetMultiAccountBalance(req *account.AccountBalanceRequest) ([]*account.AccountBalanceResponse, error)
-	GetAccountUtxo(req *account.AccountUtxoRequest) (*account.AccountUtxoResponse, error)
+	GetAccountUtxo(req *account.AccountUtxoRequest) ([]account.AccountUtxoResponse, error)
 	GetTxByAddress(request *account.AccountTxRequest) (*account.TransactionResponse[account.AccountTxResponse], error)
 
 	// GetTokenList token
-	GetTokenList(request *token.TokenRequest) (*token.TokenResponse, error)
+	GetTokenList(request *token.TokenRequest) ([]token.TokenResponse, error)
 
 	// GetEstimateGasFee gas fee
 	GetEstimateGasFee(req *gas_fee.GasEstimateFeeRequest) (*gas_fee.GasEstimateFeeResponse, error)

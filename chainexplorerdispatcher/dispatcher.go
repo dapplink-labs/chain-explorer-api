@@ -3,7 +3,6 @@ package chainexplorerdispatcher
 import (
 	"context"
 	"fmt"
-	"github.com/dapplink-labs/chain-explorer-api/common/token"
 	"math/big"
 	"runtime/debug"
 	"strings"
@@ -17,6 +16,7 @@ import (
 	"github.com/dapplink-labs/chain-explorer-api/common/account"
 	"github.com/dapplink-labs/chain-explorer-api/common/chain"
 	"github.com/dapplink-labs/chain-explorer-api/common/gas_fee"
+	"github.com/dapplink-labs/chain-explorer-api/common/token"
 	"github.com/dapplink-labs/chain-explorer-api/common/transaction"
 	"github.com/dapplink-labs/chain-explorer-api/explorer"
 	"github.com/dapplink-labs/chain-explorer-api/explorer/etherscan"
@@ -124,10 +124,10 @@ func (cea *ChainExplorerDispatcher) GetMultiAccountBalance(request *account.Acco
 	return cea.RegistryExplorer[request.ExplorerName].GetMultiAccountBalance(request)
 }
 
-func (cea *ChainExplorerDispatcher) GetAccountUtxo(request *account.AccountUtxoRequest) (*account.AccountUtxoResponse, error) {
+func (cea *ChainExplorerDispatcher) GetAccountUtxo(request *account.AccountUtxoRequest) ([]account.AccountUtxoResponse, error) {
 	resp := cea.preHandler(request)
 	if resp != nil {
-		return &account.AccountUtxoResponse{}, nil
+		return []account.AccountUtxoResponse{}, nil
 	}
 	return cea.RegistryExplorer[request.ExplorerName].GetAccountUtxo(request)
 }
@@ -148,10 +148,10 @@ func (cea *ChainExplorerDispatcher) GetEstimateGasFee(request *gas_fee.GasEstima
 	return cea.RegistryExplorer[request.ExplorerName].GetEstimateGasFee(request)
 }
 
-func (cea *ChainExplorerDispatcher) GetTokenList(request *token.TokenRequest) (*token.TokenResponse, error) {
+func (cea *ChainExplorerDispatcher) GetTokenList(request *token.TokenRequest) ([]token.TokenResponse, error) {
 	resp := cea.preHandler(request)
 	if resp != nil {
-		return &token.TokenResponse{}, nil
+		return []token.TokenResponse{}, nil
 	}
 	return cea.RegistryExplorer[request.ExplorerName].GetTokenList(request)
 }

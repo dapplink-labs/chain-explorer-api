@@ -3,28 +3,19 @@ package tests
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/dapplink-labs/chain-explorer-api/explorer/etherscan"
-	"github.com/dapplink-labs/chain-explorer-api/explorer/oklink"
-	"os"
 	"testing"
 
 	"github.com/dapplink-labs/chain-explorer-api/common/account"
 	"github.com/dapplink-labs/chain-explorer-api/common/chain"
+	"github.com/dapplink-labs/chain-explorer-api/explorer/etherscan"
+	"github.com/dapplink-labs/chain-explorer-api/explorer/oklink"
 )
 
-func setEnv() {
-	os.Setenv("HTTP_PROXY", "http://127.0.0.1:7890")
-	os.Setenv("HTTPS_PROXY", "http://127.0.0.1:7890")
-}
-
 func Test_etherscan_GetTxByAddress_txList(t *testing.T) {
-	setEnv()
-
 	_, etherscanClient, err := NewMockClient()
 	if err != nil {
 		fmt.Println("new mock client fail", "err", err)
 	}
-
 	request := &account.AccountTxRequest{
 		ChainShortName:   "ETH",
 		ExplorerName:     etherscan.ChainExplorerName,
@@ -71,8 +62,6 @@ func Test_etherscan_GetTxByAddress_txList(t *testing.T) {
 }
 
 func Test_etherscan_GetTxByAddress_txlistinternal(t *testing.T) {
-	setEnv()
-
 	_, etherscanClient, err := NewMockClient()
 	if err != nil {
 		fmt.Println("new mock client fail", "err", err)
@@ -123,7 +112,6 @@ func Test_etherscan_GetTxByAddress_txlistinternal(t *testing.T) {
 }
 
 func Test_etherscan_GetTxByAddress_tokentx(t *testing.T) {
-	setEnv()
 
 	_, etherscanClient, err := NewMockClient()
 	if err != nil {
@@ -177,7 +165,6 @@ func Test_etherscan_GetTxByAddress_tokentx(t *testing.T) {
 }
 
 func Test_etherscan_GetTxByAddress_tokennfttx(t *testing.T) {
-	setEnv()
 
 	_, etherscanClient, err := NewMockClient()
 	if err != nil {
@@ -231,7 +218,6 @@ func Test_etherscan_GetTxByAddress_tokennfttx(t *testing.T) {
 }
 
 func Test_etherscan_GetTxByAddress_token1155tx(t *testing.T) {
-	setEnv()
 
 	_, etherscanClient, err := NewMockClient()
 	if err != nil {

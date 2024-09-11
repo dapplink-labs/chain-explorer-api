@@ -1,9 +1,9 @@
 package token
 
-type TokenConfig struct {
-	ChainShortName string `json:"chainShortName"`
-	ExplorerName   string `json:"explorerName"`
-}
+// type TokenConfig struct {
+// 	ChainShortName string `json:"chainShortName"`
+// 	ExplorerName   string `json:"explorerName"`
+// }
 
 // StandardTokenProtocols 20 tokens: token_20; 721 tokens: token_721; 1155 tokens: token_1155;
 // Inscription token protocol type
@@ -47,7 +47,8 @@ var Protocol = Protocols{
 }
 
 type TokenRequest struct {
-	TokenConfig
+	ChainShortName     string `json:"chainShortName"`
+	ExplorerName       string `json:"explorerName"`
 	ContractAddress    string `json:"contractAddress"`
 	ProtocolType       string `json:"protocolType"`
 	TokenInscriptionId string `json:"tokenInscriptionId"`

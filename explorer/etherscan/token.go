@@ -9,13 +9,17 @@ import (
 
 func (cea *ChainExplorerAdaptor) GetTokenList(req *token.TokenRequest) (*token.TokenResponse, error) {
 	var trps *token.TokenResponse
+	resData := &ApiResponse[[]TokensResp]{}
 	tokenList := []TokensResp{}
 	param := common.M{
 		"contractaddress": req.ContractAddress,
 	}
-	err := cea.baseClient.Call("etherscan", "token", "tokeninfo", "", param, &tokenList)
+	fmt.Println(param, "GetTokenList param ")
+
+	err := cea.baseClient.Call("etherscan", "token", "tokeninfo", "", param, &resData)
+	//err := cea.baseClient.Call("etherscan", "stats", "tokensupply", "", param, &tokenList)
 	if err != nil {
-		fmt.Println("err", err)
+		fmt.Println("err 99999999", err)
 	}
 	for i, _token := range tokenList {
 		trps.TokenList[i] = token.TokenInfo{

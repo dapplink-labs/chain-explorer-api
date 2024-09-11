@@ -22,7 +22,16 @@ type GasTrackerGasOracleResp struct {
 	GasUsedRatio    string `json:"gasUsedRatio"`
 }
 
-type NormalTransaction struct {
+type AddressTransactionRequest struct {
+	Address    string `url:"address"`
+	StartBlock int    `url:"startblock"`
+	EndBlock   int    `url:"endblock"`
+	Page       int    `url:"page"`
+	Offset     int    `url:"offset"`
+	Sort       string `url:"sort"`
+}
+
+type AddressTransactionResp struct {
 	BlockNumber       string `json:"blockNumber"`
 	TimeStamp         string `json:"timeStamp"`
 	Hash              string `json:"hash"`
@@ -43,87 +52,9 @@ type NormalTransaction struct {
 	Confirmations     string `json:"confirmations"`
 	MethodId          string `json:"methodId"`
 	FunctionName      string `json:"functionName"`
-}
-
-type InternalTransaction struct {
-	BlockNumber     string `json:"blockNumber"`
-	TimeStamp       string `json:"timeStamp"`
-	Hash            string `json:"hash"`
-	From            string `json:"from"`
-	To              string `json:"to"`
-	Value           string `json:"value"`
-	ContractAddress string `json:"contractAddress"`
-	Input           string `json:"input"`
-	Type            string `json:"type"`
-	Gas             string `json:"gas"`
-	GasUsed         string `json:"gasUsed"`
-	TraceId         string `json:"traceId"`
-	IsError         string `json:"isError"`
-	ErrCode         string `json:"errCode"`
-}
-
-type TokenErc20Transaction struct {
-	BlockNumber       string `json:"blockNumber"`
-	TimeStamp         string `json:"timeStamp"`
-	Hash              string `json:"hash"`
-	Nonce             string `json:"nonce"`
-	BlockHash         string `json:"blockHash"`
-	From              string `json:"from"`
-	ContractAddress   string `json:"contractAddress"`
-	To                string `json:"to"`
-	Value             string `json:"value"`
-	TokenName         string `json:"tokenName"`
-	TokenSymbol       string `json:"tokenSymbol"`
-	TokenDecimal      string `json:"tokenDecimal"`
-	TransactionIndex  string `json:"transactionIndex"`
-	Gas               string `json:"gas"`
-	GasPrice          string `json:"gasPrice"`
-	GasUsed           string `json:"gasUsed"`
-	CumulativeGasUsed string `json:"cumulativeGasUsed"`
-	Input             string `json:"input"`
-	Confirmations     string `json:"confirmations"`
-}
-
-type TokenErc721Transaction struct {
-	BlockNumber       string `json:"blockNumber"`
-	TimeStamp         string `json:"timeStamp"`
-	Hash              string `json:"hash"`
-	Nonce             string `json:"nonce"`
-	BlockHash         string `json:"blockHash"`
-	From              string `json:"from"`
-	ContractAddress   string `json:"contractAddress"`
-	To                string `json:"to"`
-	TokenID           string `json:"tokenID"`
-	TokenName         string `json:"tokenName"`
-	TokenSymbol       string `json:"tokenSymbol"`
-	TokenDecimal      string `json:"tokenDecimal"`
-	TransactionIndex  string `json:"transactionIndex"`
-	Gas               string `json:"gas"`
-	GasPrice          string `json:"gasPrice"`
-	GasUsed           string `json:"gasUsed"`
-	CumulativeGasUsed string `json:"cumulativeGasUsed"`
-	Input             string `json:"input"`
-	Confirmations     string `json:"confirmations"`
-}
-
-type TokenErc1155Transaction struct {
-	BlockNumber       string `json:"blockNumber"`
-	TimeStamp         string `json:"timeStamp"`
-	Hash              string `json:"hash"`
-	Nonce             string `json:"nonce"`
-	BlockHash         string `json:"blockHash"`
-	TransactionIndex  string `json:"transactionIndex"`
-	Gas               string `json:"gas"`
-	GasPrice          string `json:"gasPrice"`
-	GasUsed           string `json:"gasUsed"`
-	CumulativeGasUsed string `json:"cumulativeGasUsed"`
-	Input             string `json:"input"`
-	ContractAddress   string `json:"contractAddress"`
-	From              string `json:"from"`
-	To                string `json:"to"`
-	TokenID           string `json:"tokenID"`
-	TokenValue        string `json:"tokenValue"`
-	TokenName         string `json:"tokenName"`
-	TokenSymbol       string `json:"tokenSymbol"`
-	Confirmations     string `json:"confirmations"`
+	TokenID           string `json:"tokenID,omitempty"`
+	TokenName         string `json:"tokenName,omitempty"`
+	TokenSymbol       string `json:"tokenSymbol,omitempty"`
+	TokenDecimal      string `json:"tokenDecimal,omitempty"`
+	TokenValue        string `json:"tokenValue,omitempty"`
 }

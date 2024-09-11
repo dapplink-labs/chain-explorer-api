@@ -2,6 +2,7 @@ package etherscan
 
 import (
 	"fmt"
+	"github.com/dapplink-labs/chain-explorer-api/common/chain"
 
 	"github.com/dapplink-labs/chain-explorer-api/common"
 	"github.com/dapplink-labs/chain-explorer-api/common/account"
@@ -74,68 +75,88 @@ func (cea *ChainExplorerAdaptor) GetAccountUtxo(req *account.AccountUtxoRequest)
 }
 
 func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxRequest) (*account.TransactionResponse[account.AccountTxResponse], error) {
-	param := common.M{
-		"address": request.Address,
-		"page":    request.Page,
-		"offset":  request.Offset,
-	}
-	common.Compose(param, "startblock", request.StartBlock)
-	common.Compose(param, "endblock", request.EndBlock)
-	if request.Desc {
-		param["sort"] = "desc"
-	} else {
-		param["sort"] = "asc"
-	}
+	resp := &ApiResponse[[]AddressTransactionResp]{}
 
 	// normal transaction
 	if request.Action == "txlist" {
-		resp := &ApiResponse[[]NormalTransaction]{}
-		err := cea.baseClient.Call("etherscan", "account", "txlist", "", param, &resp)
+		err := cea.baseClient.Call(ChainExplorerName, "account", "txlist", "", nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
-			return &account.AccountTxResponse{}, nil
+			return &account.TransactionResponse[account.AccountTxResponse]{}, nil
 		}
 	}
 
 	// internal transaction
 	if request.Action == "txlistinternal" {
-		resp := &ApiResponse[[]InternalTransaction]{}
-		err := cea.baseClient.Call("etherscan", "account", "txlistinternal", "", param, &resp)
+		err := cea.baseClient.Call(ChainExplorerName, "account", "txlistinternal", "", nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
-			return &account.AccountTxResponse{}, nil
+			return &account.TransactionResponse[account.AccountTxResponse]{}, nil
 		}
 	}
 
 	// token transaction
 	if request.Action == "tokentx" {
-		resp := &ApiResponse[[]TokenErc20Transaction]{}
-		err := cea.baseClient.Call("etherscan", "account", "tokentx", "", param, &resp)
+		err := cea.baseClient.Call(ChainExplorerName, "account", "tokentx", "", nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
-			return &account.AccountTxResponse{}, nil
+			return &account.TransactionResponse[account.AccountTxResponse]{}, nil
 		}
 	}
 
 	// nft transaction
 	if request.Action == "tokennfttx" {
-		resp := &ApiResponse[[]TokenErc721Transaction]{}
-		err := cea.baseClient.Call("etherscan", "account", "tokennfttx", "", param, &resp)
+		err := cea.baseClient.Call(ChainExplorerName, "account", "tokennfttx", "", nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
-			return &account.AccountTxResponse{}, nil
+			return &account.TransactionResponse[account.AccountTxResponse]{}, nil
 		}
 	}
 
 	// nft 1155 transaction
 	if request.Action == "token1155tx" {
-		resp := &ApiResponse[[]TokenErc721Transaction]{}
-		err := cea.baseClient.Call("etherscan", "account", "token1155tx", "", param, &resp)
+		err := cea.baseClient.Call(ChainExplorerName, "account", "token1155tx", "", nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
-			return &account.AccountTxResponse{}, nil
+			return &account.TransactionResponse[account.AccountTxResponse]{}, nil
 		}
 	}
 
-	return nil, nil
+	pageResponse := chain.PageResponse{
+		Page:      request.Page,
+		Limit:     request.Limit,
+		TotalPage: "",
+	}
+
+	var transactionList []account.AccountTxResponse
+	for _, tx := range resp.Result {
+		tempOkTx := account.AccountTxResponse{
+			TxId:                 tx.Hash,
+			BlockHash:            tx.BlockHash,
+			Height:               tx.BlockNumber,
+			TransactionTime:      tx.TimeStamp,
+			From:                 tx.From,
+			To:                   tx.To,
+			TokenContractAddress: tx.ContractAddress,
+			TokenId:              tx.TokenID,
+			Amount:               tx.Value,
+			Symbol:               tx.TokenSymbol,
+			IsFromContract:       false,
+			IsToContract:         false,
+			Operation:            tx.FunctionName,
+			MethodId:             tx.MethodId,
+			Nonce:                tx.Nonce,
+			GasPrice:             tx.GasPrice,
+			GasLimit:             tx.Gas,
+			GasUsed:              tx.GasUsed,
+			TxFee:                "",
+			State:                tx.TxReceiptStatus,
+			TransactionType:      "",
+		}
+		transactionList = append(transactionList, tempOkTx)
+	}
+	return &account.TransactionResponse[account.AccountTxResponse]{
+		PageResponse:    pageResponse,
+		TransactionList: transactionList,
+	}, nil
 }

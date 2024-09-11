@@ -46,9 +46,15 @@ type AccountUtxoResponse struct {
 type Action string
 
 const (
-	ActionNormal   Action = "normal"
-	ActionInternal Action = "internal"
-	ActionToken    Action = "token"
+	OkLinkActionNormal   Action = "normal"
+	OkLinkActionInternal Action = "internal"
+	OkLinkActionToken    Action = "token"
+
+	EtherscanActionTxList         Action = "txlist"
+	EtherscanActionTxListInternal Action = "txlistinternal"
+	EtherscanActionTokenTx        Action = "tokentx"
+	EtherscanActionTokenNftTx     Action = "tokennfttx"
+	EtherscanActionToken1155Tx    Action = "token1155tx"
 )
 
 type ProtocolType string

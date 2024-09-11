@@ -78,7 +78,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 	resp := &ApiResponse[[]AddressTransactionResp]{}
 
 	// normal transaction
-	if request.Action == "txlist" {
+	if request.Action == account.EtherscanActionTxList {
 		err := cea.baseClient.Call(ChainExplorerName, "account", "txlist", "", nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
@@ -87,7 +87,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 	}
 
 	// internal transaction
-	if request.Action == "txlistinternal" {
+	if request.Action == account.EtherscanActionTxListInternal {
 		err := cea.baseClient.Call(ChainExplorerName, "account", "txlistinternal", "", nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
@@ -96,7 +96,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 	}
 
 	// token transaction
-	if request.Action == "tokentx" {
+	if request.Action == account.EtherscanActionTokenTx {
 		err := cea.baseClient.Call(ChainExplorerName, "account", "tokentx", "", nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
@@ -105,7 +105,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 	}
 
 	// nft transaction
-	if request.Action == "tokennfttx" {
+	if request.Action == account.EtherscanActionTokenNftTx {
 		err := cea.baseClient.Call(ChainExplorerName, "account", "tokennfttx", "", nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
@@ -114,7 +114,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 	}
 
 	// nft 1155 transaction
-	if request.Action == "token1155tx" {
+	if request.Action == account.EtherscanActionToken1155Tx {
 		err := cea.baseClient.Call(ChainExplorerName, "account", "token1155tx", "", nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)

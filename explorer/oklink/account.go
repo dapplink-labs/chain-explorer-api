@@ -106,7 +106,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 	resp := &ApiResponseType{}
 
 	// normal transaction
-	if request.Action == account.ActionNormal {
+	if request.Action == account.OkLinkActionNormal {
 		baseURL := "/api/v5/explorer/address/normal-transaction-list"
 		fullURL := fmt.Sprintf("%s?%s", baseURL, request.ToQueryUrl())
 
@@ -119,7 +119,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 	}
 
 	// internal transaction
-	if request.Action == account.ActionInternal {
+	if request.Action == account.OkLinkActionInternal {
 		baseURL := "/api/v5/explorer/address/internal-transaction-list"
 		fullURL := fmt.Sprintf("%s?%s", baseURL, request.ToQueryUrl())
 
@@ -131,7 +131,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 	}
 
 	// token transaction
-	if request.Action == account.ActionToken {
+	if request.Action == account.OkLinkActionToken {
 		baseURL := "/api/v5/explorer/address/internal-transaction-list"
 		fullURL := fmt.Sprintf("%s?%s", baseURL, request.ToQueryUrl())
 

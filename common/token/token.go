@@ -58,16 +58,12 @@ type TokenRequest struct {
 	Limit              string `json:"limit"`
 }
 
-type TokenInfo struct {
+type TokenResponse struct {
 	Symbol               string `json:"symbol"`
 	TokenContractAddress string `json:"tokenContractAddress"`
 	TokenId              string `json:"tokenId"`
 	TotalSupply          string `json:"totalSupply"` // TotalSupply
 	Decimal              string `json:"decimal"`     //  default 1
-}
-
-type TokenResponse struct {
-	TokenList []TokenInfo `json:"tokenInfo"`
 }
 
 // IsStandardProtocol Determine whether the given protocol type is a standard token protocol

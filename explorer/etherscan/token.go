@@ -2,33 +2,29 @@ package etherscan
 
 import (
 	"fmt"
-
 	"github.com/dapplink-labs/chain-explorer-api/common"
 	"github.com/dapplink-labs/chain-explorer-api/common/token"
 )
 
-func (cea *ChainExplorerAdaptor) GetTokenList(req *token.TokenRequest) (*token.TokenResponse, error) {
-	var trps *token.TokenResponse
-	resData := &ApiResponse[[]TokensResp]{}
-	tokenList := []TokensResp{}
+func (cea *ChainExplorerAdaptor) GetTokenList(req *token.TokenRequest) ([]token.TokenResponse, error) {
+	var tokenList []token.TokenResponse
+	var responseData []TokensResp
 	param := common.M{
 		"contractaddress": req.ContractAddress,
 	}
-	fmt.Println(param, "GetTokenList param ")
-
-	err := cea.baseClient.Call("etherscan", "token", "tokeninfo", "", param, &resData)
-	//err := cea.baseClient.Call("etherscan", "stats", "tokensupply", "", param, &tokenList)
+	err := cea.baseClient.Call("etherscan", "token", "tokeninfo", "", param, &responseData)
 	if err != nil {
-		fmt.Println("err 99999999", err)
+		fmt.Println("call token list for etherscan fail", "err", err)
 	}
-	for i, _token := range tokenList {
-		trps.TokenList[i] = token.TokenInfo{
-			Symbol:               _token.Symbol,
-			TokenContractAddress: _token.ContractAddress,
-			TokenId:              _token.TokenId,
-			TotalSupply:          _token.TotalSupply,
-			Decimal:              _token.Divisor,
+	for _, tokenValue := range responseData {
+		tokenItem := token.TokenResponse{
+			Symbol:               tokenValue.Symbol,
+			TokenContractAddress: tokenValue.ContractAddress,
+			TokenId:              tokenValue.TokenId,
+			TotalSupply:          tokenValue.TotalSupply,
+			Decimal:              tokenValue.Divisor,
 		}
+		tokenList = append(tokenList, tokenItem)
 	}
-	return trps, nil
+	return tokenList, nil
 }

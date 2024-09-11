@@ -25,13 +25,11 @@ func TestGetAccountUtxo(t *testing.T) {
 	}
 	fmt.Println("============Account Request Utxo===========")
 	for _, value := range accountRequestUtxo {
-		for _, item := range value.UtxoList {
-			fmt.Println(item.TxId)
-			fmt.Println(item.BlockTime)
-			fmt.Println(item.Address)
-			fmt.Println(item.UnspentAmount)
-			fmt.Println(item.Index)
-		}
+		fmt.Println(value.TxId)
+		fmt.Println(value.BlockTime)
+		fmt.Println(value.Address)
+		fmt.Println(value.UnspentAmount)
+		fmt.Println(value.Index)
 	}
 	fmt.Println("============Account Request Utxo===========")
 }

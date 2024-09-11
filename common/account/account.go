@@ -35,8 +35,7 @@ type AccountUtxoRequest struct {
 }
 
 type AccountUtxoResponse struct {
-	TotalUtxo     string `json:"totalUtxo"`
-	Txid          string `json:"txid"`
+	TxId          string `json:"txid"`
 	Height        string `json:"height"`
 	BlockTime     string `json:"blockTime"`
 	Address       string `json:"address"`

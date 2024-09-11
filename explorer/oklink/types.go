@@ -101,3 +101,23 @@ type TokenListData struct {
 	TotalPage string          `json:"totalPage"`
 	TokenList []TokenListInfo `json:"tokenList"`
 }
+
+// AddressUtxoData The Data field within the Response structure of
+// UTXO-specific data -> Get remaining UTXO addresses
+type AddressUtxoData struct {
+	Page      string            `json:"page"`
+	Limit     string            `json:"limit"`
+	TotalPage string            `json:"totalPage"`
+	UtxoList  []AddressUtxoUtxo `json:"utxoList"`
+}
+
+// AddressUtxoUtxo The UtxoList field within the Data field within the Response structure of
+// UTXO-specific data -> Get remaining UTXO addresses
+type AddressUtxoUtxo struct {
+	TxId          string `json:"txid"`
+	Height        string `json:"height"`
+	BlockTime     string `json:"blockTime"`
+	Address       string `json:"address"`
+	UnspentAmount string `json:"unspentAmount"`
+	Index         string `json:"index"`
+}

@@ -106,10 +106,6 @@ func (cea *ChainExplorerAdaptor) GetMultiAccountBalance(request *account.Account
 	return abrpsList, nil
 }
 
-func (cea *ChainExplorerAdaptor) GetAccountUtxo(req *account.AccountUtxoRequest) (*account.AccountUtxoResponse, error) {
-	return &account.AccountUtxoResponse{}, nil
-}
-
 func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxRequest) (*account.TransactionResponse[account.AccountTxResponse], error) {
 	type TransactionType = account.AccountTxResponse
 	type TransactionResponseType = account.TransactionResponse[TransactionType]

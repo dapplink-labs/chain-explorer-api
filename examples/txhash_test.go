@@ -30,5 +30,4 @@ func TestOklinkGetTxByHash(t *testing.T) {
 	fmt.Println(txRes.InputDetails)
 	fmt.Println(txRes.OutputDetails)
 	fmt.Println("============txRes===========")
-
 }

@@ -3,7 +3,6 @@ package chainexplorerdispatcher
 import (
 	"context"
 	"fmt"
-	"github.com/dapplink-labs/chain-explorer-api/common/token"
 	"math/big"
 	"runtime/debug"
 	"strings"
@@ -17,6 +16,7 @@ import (
 	"github.com/dapplink-labs/chain-explorer-api/common/account"
 	"github.com/dapplink-labs/chain-explorer-api/common/chain"
 	"github.com/dapplink-labs/chain-explorer-api/common/gas_fee"
+	"github.com/dapplink-labs/chain-explorer-api/common/token"
 	"github.com/dapplink-labs/chain-explorer-api/common/transaction"
 	"github.com/dapplink-labs/chain-explorer-api/explorer"
 	"github.com/dapplink-labs/chain-explorer-api/explorer/etherscan"

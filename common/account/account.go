@@ -1,9 +1,10 @@
 package account
 
 import (
+	"net/url"
+
 	"github.com/dapplink-labs/chain-explorer-api/common"
 	"github.com/dapplink-labs/chain-explorer-api/common/chain"
-	"net/url"
 )
 
 type AccountBalanceRequest struct {

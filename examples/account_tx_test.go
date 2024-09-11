@@ -501,7 +501,7 @@ func Test_oklink_GetTxByAddress_token_1155(t *testing.T) {
 		ExplorerName:   oklink.ChainExplorerName,
 		Action:         account.OkLinkActionToken,
 		ProtocolType:   account.ProtocolTypeToken1155,
-		Address:        "0x4838B106FCe9647Bdf1E7877BF73cE8B0BAD5f97",
+		Address:        "0xe29Fa394Eef7d92e92A419c351B58Be24e907c7A",
 		IsFromOrTo:     string(account.From),
 		PageRequest: chain.PageRequest{
 			Page:  1,

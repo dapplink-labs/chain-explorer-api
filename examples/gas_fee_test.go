@@ -2,8 +2,9 @@ package tests
 
 import (
 	"fmt"
-	"github.com/dapplink-labs/chain-explorer-api/common/gas_fee"
 	"testing"
+
+	"github.com/dapplink-labs/chain-explorer-api/common/gas_fee"
 )
 
 func TestGasFee(t *testing.T) {

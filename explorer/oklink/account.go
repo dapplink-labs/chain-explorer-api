@@ -141,7 +141,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 
 	// token transaction
 	if request.Action == account.OkLinkActionToken {
-		baseURL := "/api/v5/explorer/address/internal-transaction-list"
+		baseURL := "/api/v5/explorer/address/token-transaction-list"
 		fullURL := fmt.Sprintf("%s?%s", baseURL, request.ToQueryUrl())
 
 		err := cea.baseClient.Call(ChainExplorerName, "", "", fullURL, nil, &resp)

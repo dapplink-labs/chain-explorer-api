@@ -64,3 +64,21 @@ type AddressTokenBalanceData struct {
 type AddressTokenBalanceResp struct {
 	Data []AddressTokenBalanceData `json:"data"`
 }
+
+type TokenListInfo struct {
+	Symbol               string `json:"symbol"`
+	Token                string `json:"token"`         // 代币名字简称：USDC
+	TokenId              string `json:"tokenId"`       // 默认为0
+	TotalSupply          string `json:"totalSupply"`   // 最大供应量
+	TokenFullName        string `json:"tokenFullName"` // 代币名字全称：USDCoin
+	Precision            string `json:"precision"`     // 精度 默认为1
+	TokenContractAddress string `json:"tokenContractAddress"`
+	TokenInscriptionId   string `json:"tokenInscriptionId"` // 铭文代币的铭文ID
+}
+
+type TokenListData struct {
+	Limit     string          `json:"limit"`
+	Page      string          `json:"page"`
+	TotalPage string          `json:"totalPage"`
+	TokenList []TokenListInfo `json:"tokenList"`
+}

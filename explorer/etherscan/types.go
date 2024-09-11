@@ -58,3 +58,12 @@ type AddressTransactionResp struct {
 	TokenDecimal      string `json:"tokenDecimal,omitempty"`
 	TokenValue        string `json:"tokenValue,omitempty"`
 }
+
+type TokensResp struct {
+	Symbol          string `json:"symbol"`
+	ContractAddress string `json:"ContractAddress"`
+	TokenId         string `json:"tokenId"`
+	TotalSupply     string `json:"totalSupply"` // 最大供应量
+	Divisor         string `json:"divisor"`     // 精度 默认为1
+	// Decimal              string `json:"decimal"`     // 精度 默认为1
+}

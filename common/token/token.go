@@ -5,13 +5,13 @@ type TokenConfig struct {
 	ExplorerName   string `json:"explorerName"`
 }
 
-// 20代币：token_20; 721代币：token_721; 1155代币：token_1155;
-// 铭文代币协议类型
-// Runes符文：runes
-// BRC-20代币：brc20
-// SRC-20代币：src20
-// ARC-20代币：arc20
-// Ordinals NFT：ordinals_nft
+// StandardTokenProtocols 20 tokens: token_20; 721 tokens: token_721; 1155 tokens: token_1155;
+// Inscription token protocol type
+// Runes: runes
+// BRC-20 tokens: brc20
+// SRC-20 tokens: src20
+// ARC-20 tokens: arc20
+// Ordinals NFT: ordinals_nft
 type StandardTokenProtocols struct {
 	Token20   string
 	Token721  string
@@ -50,9 +50,9 @@ type TokenRequest struct {
 	TokenConfig
 	ContractAddress    string `json:"contractAddress"`
 	ProtocolType       string `json:"protocolType"`
-	TokenInscriptionId string `json:tokenInscriptionId`
-	Symbol             string `json:symbol`
-	ProjectId          string `json:projectId`
+	TokenInscriptionId string `json:"tokenInscriptionId"`
+	Symbol             string `json:"symbol"`
+	ProjectId          string `json:"projectId"`
 	Page               string `json:"page"`
 	Limit              string `json:"limit"`
 }
@@ -61,15 +61,15 @@ type TokenInfo struct {
 	Symbol               string `json:"symbol"`
 	TokenContractAddress string `json:"tokenContractAddress"`
 	TokenId              string `json:"tokenId"`
-	TotalSupply          string `json:"totalSupply"` // 最大供应量
-	Decimal              string `json:"decimal"`     // 精度 默认为1
+	TotalSupply          string `json:"totalSupply"` // TotalSupply
+	Decimal              string `json:"decimal"`     //  default 1
 }
 
 type TokenResponse struct {
 	TokenList []TokenInfo `json:"tokenInfo"`
 }
 
-// IsStandardProtocol 判断给定的协议类型是否为标准token协议
+// IsStandardProtocol Determine whether the given protocol type is a standard token protocol
 func IsStandardProtocol(protocolType string) bool {
 	switch protocolType {
 	case Protocol.StandardTokenProtocols.Token20, Protocol.StandardTokenProtocols.Token721, Protocol.StandardTokenProtocols.Token1155:
@@ -79,7 +79,7 @@ func IsStandardProtocol(protocolType string) bool {
 	}
 }
 
-// IsBTCEcosystemProtocol 判断给定的协议类型是否为比特币生态的特殊token协议
+// IsBTCEcosystemProtocol Determine whether the given protocol type is a special token protocol for the Bitcoin ecosystem
 func IsBTCEcosystemProtocol(protocolType string) bool {
 	switch protocolType {
 	case Protocol.BTCEcosystemProtocols.Runes, Protocol.BTCEcosystemProtocols.BRC20, Protocol.BTCEcosystemProtocols.SRC20, Protocol.BTCEcosystemProtocols.ARC20, Protocol.BTCEcosystemProtocols.OrdinalsNFT:

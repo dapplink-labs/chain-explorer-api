@@ -2,6 +2,7 @@ package oklink
 
 import (
 	"fmt"
+
 	"github.com/dapplink-labs/chain-explorer-api/common/gas_fee"
 )
 

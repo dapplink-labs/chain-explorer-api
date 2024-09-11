@@ -12,35 +12,41 @@ import (
 // GET /api/v5/explorer/address/address-summary?chainShortName=eth&address=0x85c6627c4ed773cb7c32644b041f58a058b00d30
 func (cea *ChainExplorerAdaptor) GetAccountBalance(request *account.AccountBalanceRequest) (*account.AccountBalanceResponse, error) {
 	var abrps *account.AccountBalanceResponse
-	if request.ContractAddress[0] != "0x00" {
+	if request.ContractAddress[0] == "0x00" {
 		apiUrl := fmt.Sprintf("api/v5/explorer/address/address-summary?chainShortName=%s&address=%s", request.ChainShortName, request.Account[0])
-		response := AddressSummaryResp{}
-		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, response)
+		var responseData []AddressSummaryData
+		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
 		if err != nil {
+			fmt.Println("error is:", err)
 			return nil, err
 		}
-		balance, _ := new(big.Int).SetString(response.Data[0].Balance, 10)
+		balance, _ := new(big.Int).SetString(responseData[0].Balance, 10)
 		abrps = &account.AccountBalanceResponse{
-			Account:         response.Data[0].Address,
+			Account:         responseData[0].Address,
 			Balance:         (*common.BigInt)(balance),
-			Symbol:          response.Data[0].BalanceSymbol,
-			ContractAddress: response.Data[0].CreateContractAddress,
+			BalanceStr:      responseData[0].Balance,
+			Symbol:          responseData[0].BalanceSymbol,
+			ContractAddress: responseData[0].CreateContractAddress,
 			TokenId:         "0x00",
 		}
 	} else {
 		apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance?chainShortName=%s&address=%s&protocolType=%s&limit=%d", request.ChainShortName, request.Account[0], request.ProtocolType[0], request.Limit[0])
-		response := AddressTokenBalanceResp{}
-		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, response)
+		fmt.Println(apiUrl)
+		var responseData []AddressTokenBalanceData
+		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
 		if err != nil {
 			return nil, err
 		}
-		balance, _ := new(big.Int).SetString(response.Data[0].TokenList[0].HoldingAmount, 10)
+		fmt.Println(responseData)
+		fmt.Println(responseData[0].TokenList)
+		balance, _ := new(big.Int).SetString(responseData[0].TokenList[0].HoldingAmount, 10)
 		abrps = &account.AccountBalanceResponse{
 			Account:         request.Account[0],
 			Balance:         (*common.BigInt)(balance),
-			Symbol:          response.Data[0].TokenList[0].Symbol,
-			ContractAddress: response.Data[0].TokenList[0].TokenContractAddress,
-			TokenId:         response.Data[0].TokenList[0].TokenId,
+			BalanceStr:      responseData[0].TokenList[0].HoldingAmount,
+			Symbol:          responseData[0].TokenList[0].Symbol,
+			ContractAddress: responseData[0].TokenList[0].TokenContractAddress,
+			TokenId:         responseData[0].TokenList[0].TokenId,
 		}
 	}
 	return abrps, nil

@@ -13,10 +13,16 @@ import (
 	"github.com/dapplink-labs/chain-explorer-api/common"
 )
 
-type Envelope struct {
+type EtherscanEnvelope struct {
 	Status  int             `json:"status,string"`
 	Message string          `json:"message"`
 	Result  json.RawMessage `json:"result"`
+}
+
+type OklinkEnvelope struct {
+	Code string          `json:"code"`
+	Msg  string          `json:"msg"`
+	Data json.RawMessage `json:"data"`
 }
 
 type BaseClient struct {
@@ -88,6 +94,7 @@ func (bc *BaseClient) Call(name, module, action, apiUrl string, param map[string
 	var httpErr error
 
 	if name == "etherscan" {
+		fmt.Println(" apiKey==", bc.key, "name=", name)
 		req, httpErr = http.NewRequest(http.MethodGet, bc.CraftEtherScanURL(module, action, param), http.NoBody)
 		if httpErr != nil {
 			err = common.WrapErr(httpErr, "http.NewRequest")
@@ -98,6 +105,7 @@ func (bc *BaseClient) Call(name, module, action, apiUrl string, param map[string
 	}
 
 	if name == "oklink" {
+		fmt.Println("apiKey and name", "apiKey:", bc.key, "name:", name)
 		req, httpErr = http.NewRequest(http.MethodGet, bc.CraftOkLinkURL(apiUrl), http.NoBody)
 		if httpErr != nil {
 			err = common.WrapErr(httpErr, "http.NewRequest")
@@ -135,41 +143,29 @@ func (bc *BaseClient) Call(name, module, action, apiUrl string, param map[string
 			err = common.WrapErr(err, "verbose mode res dump failed")
 			return
 		}
-
 		fmt.Printf("%s\n", resDump)
 	}
-
 	var content bytes.Buffer
 	if _, err = io.Copy(&content, res.Body); err != nil {
 		err = common.WrapErr(err, "reading response")
 		return
 	}
-
 	if res.StatusCode != http.StatusOK {
 		err = fmt.Errorf("response status %v %s, response body: %s", res.StatusCode, res.Status, content.String())
 		return
 	}
-
-	var envelope Envelope
-	err = json.Unmarshal(content.Bytes(), &envelope)
-	if err != nil {
-		err = common.WrapErr(err, "json unmarshal envelope")
-		return
-	}
-	if envelope.Status != 1 {
-		err = fmt.Errorf("etherscan server: %s", envelope.Message)
-		return
-	}
-
-	// only for etherscan handle
-	if name == "etherscan" && action == "tokentx" {
-		err = json.Unmarshal(bytes.Replace(envelope.Result, []byte(`"tokenDecimal":""`), []byte(`"tokenDecimal":"0"`), -1), outcome)
+	if name == "etherscan" {
+		err = bc.HandleEtherscanResponse(action, content.Bytes(), outcome)
+		if err != nil {
+			fmt.Printf("handle etherscan err", "err", err)
+		}
+	} else if name == "oklink" {
+		err = bc.HandleOklinkResponse(content.Bytes(), outcome)
+		if err != nil {
+			fmt.Printf("handle oklink err", "err", err)
+		}
 	} else {
-		err = json.Unmarshal(envelope.Result, outcome)
-	}
-	if err != nil {
-		err = common.WrapErr(err, "json unmarshal outcome")
-		return
+		fmt.Printf("unsuport type")
 	}
 	return
 }
@@ -192,4 +188,47 @@ func (bc *BaseClient) CraftEtherScanURL(module, action string, param map[string]
 func (bc *BaseClient) CraftOkLinkURL(apiUrl string) (URL string) {
 	URL = bc.baseURL + apiUrl
 	return
+}
+
+func (bc *BaseClient) HandleEtherscanResponse(action string, data []byte, outcome interface{}) error {
+	var etherscanEnvelope EtherscanEnvelope
+	err := json.Unmarshal(data, &etherscanEnvelope)
+	if err != nil {
+		err = common.WrapErr(err, "json unmarshal etherscan envelope")
+		return err
+	}
+	if etherscanEnvelope.Status != 1 {
+		err = fmt.Errorf("etherscan server: %s", etherscanEnvelope.Message)
+		return err
+	}
+	if action == "tokentx" {
+		err = json.Unmarshal(bytes.Replace(etherscanEnvelope.Result, []byte(`"tokenDecimal":""`), []byte(`"tokenDecimal":"0"`), -1), outcome)
+	} else {
+		err = json.Unmarshal(etherscanEnvelope.Result, outcome)
+	}
+	if err != nil {
+		err = common.WrapErr(err, "json unmarshal etherscan outcome")
+		return err
+	}
+	return nil
+}
+
+func (bc *BaseClient) HandleOklinkResponse(data []byte, outcome interface{}) error {
+	var oklink OklinkEnvelope
+	err := json.Unmarshal(data, &oklink)
+	if err != nil {
+		err = common.WrapErr(err, "json unmarshal oklink envelope")
+		return err
+	}
+	fmt.Println("Parse oklink data success", "code", oklink.Code, "msg", oklink.Msg)
+	if oklink.Code != "0" {
+		err = fmt.Errorf("oklink scan server: %s", oklink.Msg)
+		return err
+	}
+	err = json.Unmarshal(oklink.Data, outcome)
+	if err != nil {
+		err = common.WrapErr(err, "json unmarshal oklink outcome")
+		return err
+	}
+	return nil
 }

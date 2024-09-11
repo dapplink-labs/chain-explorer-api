@@ -20,6 +20,7 @@ type AccountBalanceRequest struct {
 type AccountBalanceResponse struct {
 	Account         string         `json:"account"`
 	Balance         *common.BigInt `json:"balance"`
+	BalanceStr      string         `json:"balanceStr"`
 	Symbol          string         `json:"symbol"`
 	ContractAddress string         `json:"contractAddress"`
 	TokenId         string         `json:"token_id"`

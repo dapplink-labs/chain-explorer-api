@@ -61,38 +61,43 @@ func (cea *ChainExplorerAdaptor) GetMultiAccountBalance(request *account.Account
 	result := strings.Join(addressStr, ",")
 	if request.ContractAddress[0] == "0x00" {
 		apiUrl := fmt.Sprintf("api/v5/explorer/address/balance-multi?chainShortName=%s&address=%s", request.ChainShortName, result)
-		response := AddressSummaryResp{}
-		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, response)
+		var responseData []AddressBalanceMultiData
+		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
 		if err != nil {
 			return nil, err
 		}
-		for _, value := range response.Data {
-			balance, _ := new(big.Int).SetString(value.Balance, 10)
-			abrps := &account.AccountBalanceResponse{
-				Account:         value.Address,
-				Balance:         (*common.BigInt)(balance),
-				Symbol:          value.BalanceSymbol,
-				ContractAddress: value.CreateContractAddress,
-				TokenId:         "0x00",
+		for _, dataValue := range responseData {
+			for _, value := range dataValue.BalanceList {
+				balance, _ := new(big.Int).SetString(value.Balance, 10)
+				abrps := &account.AccountBalanceResponse{
+					Account:         value.Address,
+					Balance:         (*common.BigInt)(balance),
+					BalanceStr:      value.Balance,
+					Symbol:          dataValue.Symbol,
+					ContractAddress: "0x00",
+					TokenId:         "0x00",
+				}
+				abrpsList = append(abrpsList, abrps)
 			}
-			abrpsList = append(abrpsList, abrps)
 		}
 	} else {
-		apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance?chainShortName=%s&address=%s&protocolType=%s&limit=%d", request.ChainShortName, request.Account[0], request.ProtocolType[0], request.Limit[0])
-		response := AddressTokenBalanceResp{}
-		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, response)
+		apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance-multi?chainShortName=%s&address=%s&protocolType=%s&page=%s&limit=%s", request.ChainShortName, result, request.ProtocolType[0], request.Page[0], request.Limit[0])
+		fmt.Println("apiUrlapiUrl===", apiUrl)
+		var responseData []AddressTokenBalanceMultiData
+		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
 		if err != nil {
 			return nil, err
 		}
-		for _, dataValue := range response.Data {
-			for _, token := range dataValue.TokenList {
+		for _, dataValue := range responseData {
+			for _, token := range dataValue.BalanceList {
 				balance, _ := new(big.Int).SetString(token.HoldingAmount, 10)
 				abrps := &account.AccountBalanceResponse{
-					Account:         result,
+					Account:         token.Address,
 					Balance:         (*common.BigInt)(balance),
-					Symbol:          token.Symbol,
+					BalanceStr:      token.HoldingAmount,
+					Symbol:          "unknown",
 					ContractAddress: token.TokenContractAddress,
-					TokenId:         token.TokenId,
+					TokenId:         "0x00",
 				}
 				abrpsList = append(abrpsList, abrps)
 			}

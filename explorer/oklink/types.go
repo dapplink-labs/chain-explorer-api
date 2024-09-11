@@ -33,12 +33,6 @@ type AddressSummaryData struct {
 	IsAaAddress                   bool   `json:"isAaAddress"`
 }
 
-// AddressSummaryResp The Response structure of
-// Fundamental blockchain data -> Address Data -> Get basic address details
-type AddressSummaryResp struct {
-	Data []AddressSummaryData `json:"data"`
-}
-
 // AddressTokenBalanceToken The TokenList field within the Data field within the Response structure of
 // Fundamental blockchain data -> Address data -> Get token balance details by address
 type AddressTokenBalanceToken struct {
@@ -59,10 +53,35 @@ type AddressTokenBalanceData struct {
 	TokenList []AddressTokenBalanceToken `json:"tokenList"`
 }
 
-// AddressTokenBalanceResp The Response structure of
-// Fundamental blockchain data -> Address data -> Get token balance details by address
-type AddressTokenBalanceResp struct {
-	Data []AddressTokenBalanceData `json:"data"`
+// AddressBalanceMultiBalance The BalanceList field within the Data field within the Response structure of
+// Fundamental blockchain data -> Address data -> Get native token balance in batches
+type AddressBalanceMultiBalance struct {
+	Address string `json:"address"`
+	Balance string `json:"balance"`
+}
+
+// AddressBalanceMultiData The Data field within the Response structure of
+// Fundamental blockchain data -> Address data -> Get native token balance in batches
+type AddressBalanceMultiData struct {
+	Symbol      string                       `json:"symbol"`
+	BalanceList []AddressBalanceMultiBalance `json:"balanceList"`
+}
+
+// AddressTokenBalanceMultiBalance The BalanceList field within the Data field within the Response structure of
+// Fundamental blockchain data -> Address data -> Get token balance in batches
+type AddressTokenBalanceMultiBalance struct {
+	Address              string `json:"address"`
+	HoldingAmount        string `json:"holdingAmount"`
+	TokenContractAddress string `json:"tokenContractAddress"`
+}
+
+// AddressTokenBalanceMultiData The Data field within the Response structure of
+// Fundamental blockchain data -> Address data -> Get token balance in batches
+type AddressTokenBalanceMultiData struct {
+	Page        string                            `json:"page"`
+	Limit       string                            `json:"limit"`
+	TotalPage   string                            `json:"totalPage"`
+	BalanceList []AddressTokenBalanceMultiBalance `json:"balanceList"`
 }
 
 type TokenListInfo struct {

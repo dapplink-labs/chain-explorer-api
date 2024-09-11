@@ -9,12 +9,19 @@ type SupportChainExplorerResponse struct {
 }
 
 type PageRequest struct {
-	Page  string `json:"page"`
-	Limit string `json:"limit"`
+	Page  uint64 `json:"page"`
+	Limit uint64 `json:"limit"`
 }
 
 type PageResponse struct {
-	Page      string `json:"page"`
-	Limit     string `json:"limit"`
-	TotalPage string `json:"totalPage"`
+	Page      uint64 `json:"page"`
+	Limit     uint64 `json:"limit"`
+	TotalPage uint64 `json:"totalPage"`
 }
+
+type SortType string
+
+const (
+	SortTypeAsc  SortType = "asc"
+	SortTypeDesc SortType = "desc"
+)

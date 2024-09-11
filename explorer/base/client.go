@@ -182,11 +182,13 @@ func (bc *BaseClient) CraftEtherScanURL(module, action string, param map[string]
 	}
 
 	URL = bc.baseURL + q.Encode()
+	fmt.Println("CraftEtherScanURL", URL)
 	return
 }
 
 func (bc *BaseClient) CraftOkLinkURL(apiUrl string) (URL string) {
 	URL = bc.baseURL + apiUrl
+	fmt.Println("CraftEtherScanURL", URL)
 	return
 }
 

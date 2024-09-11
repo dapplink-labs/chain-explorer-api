@@ -11,9 +11,13 @@ import (
 	"github.com/dapplink-labs/chain-explorer-api/common/chain"
 )
 
-func Test_GetTxByAddress_txList(t *testing.T) {
+func setEnv() {
 	os.Setenv("HTTP_PROXY", "http://127.0.0.1:7890")
 	os.Setenv("HTTPS_PROXY", "http://127.0.0.1:7890")
+}
+
+func Test_etherscan_GetTxByAddress_txList(t *testing.T) {
+	setEnv()
 
 	_, etherscanClient, err := NewMockClient()
 	if err != nil {
@@ -65,9 +69,8 @@ func Test_GetTxByAddress_txList(t *testing.T) {
 	fmt.Println("======================")
 }
 
-func Test_GetTxByAddress_txlistinternal(t *testing.T) {
-	os.Setenv("HTTP_PROXY", "http://127.0.0.1:7890")
-	os.Setenv("HTTPS_PROXY", "http://127.0.0.1:7890")
+func Test_etherscan_GetTxByAddress_txlistinternal(t *testing.T) {
+	setEnv()
 
 	_, etherscanClient, err := NewMockClient()
 	if err != nil {
@@ -118,9 +121,8 @@ func Test_GetTxByAddress_txlistinternal(t *testing.T) {
 	fmt.Println("======================")
 }
 
-func Test_GetTxByAddress_tokentx(t *testing.T) {
-	os.Setenv("HTTP_PROXY", "http://127.0.0.1:7890")
-	os.Setenv("HTTPS_PROXY", "http://127.0.0.1:7890")
+func Test_etherscan_GetTxByAddress_tokentx(t *testing.T) {
+	setEnv()
 
 	_, etherscanClient, err := NewMockClient()
 	if err != nil {
@@ -173,9 +175,8 @@ func Test_GetTxByAddress_tokentx(t *testing.T) {
 	fmt.Println("======================")
 }
 
-func Test_GetTxByAddress_tokennfttx(t *testing.T) {
-	os.Setenv("HTTP_PROXY", "http://127.0.0.1:7890")
-	os.Setenv("HTTPS_PROXY", "http://127.0.0.1:7890")
+func Test_etherscan_GetTxByAddress_tokennfttx(t *testing.T) {
+	setEnv()
 
 	_, etherscanClient, err := NewMockClient()
 	if err != nil {
@@ -210,9 +211,8 @@ func Test_GetTxByAddress_tokennfttx(t *testing.T) {
 	fmt.Println("======================")
 }
 
-func Test_GetTxByAddress_token1155tx(t *testing.T) {
-	os.Setenv("HTTP_PROXY", "http://127.0.0.1:7890")
-	os.Setenv("HTTPS_PROXY", "http://127.0.0.1:7890")
+func Test_etherscan_GetTxByAddress_token1155tx(t *testing.T) {
+	setEnv()
 
 	_, etherscanClient, err := NewMockClient()
 	if err != nil {

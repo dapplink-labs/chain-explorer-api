@@ -73,7 +73,7 @@ func (cea *ChainExplorerAdaptor) GetAccountUtxo(req *account.AccountUtxoRequest)
 	return &account.AccountUtxoResponse{}, nil
 }
 
-func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxRequest) (*account.AccountTxResponse, error) {
+func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxRequest) (*account.TransactionResponse[account.AccountTxResponse], error) {
 	param := common.M{
 		"address": request.Address,
 		"page":    request.Page,

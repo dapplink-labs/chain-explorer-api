@@ -132,10 +132,10 @@ func (cea *ChainExplorerDispatcher) GetAccountUtxo(request *account.AccountUtxoR
 	return cea.RegistryExplorer[request.ExplorerName].GetAccountUtxo(request)
 }
 
-func (cea *ChainExplorerDispatcher) GetTxByAddress(request *account.AccountTxRequest) (*account.AccountTxResponse, error) {
+func (cea *ChainExplorerDispatcher) GetTxByAddress(request *account.AccountTxRequest) (*account.TransactionResponse[account.AccountTxResponse], error) {
 	resp := cea.preHandler(request)
 	if resp != nil {
-		return &account.AccountTxResponse{}, nil
+		return &account.TransactionResponse[account.AccountTxResponse]{}, nil
 	}
 	return cea.RegistryExplorer[request.ExplorerName].GetTxByAddress(request)
 }

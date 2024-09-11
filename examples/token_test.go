@@ -2,11 +2,11 @@ package tests
 
 import (
 	"fmt"
-	"github.com/dapplink-labs/chain-explorer-api/common/token"
 	"testing"
+
+	"github.com/dapplink-labs/chain-explorer-api/common/token"
 )
 
-// go test -v examples/mock.go examples/token_test.go -run TestOklinkGetETHToken  token_test.go
 func TestOklinkGetETHToken(t *testing.T) {
 	oklinkClient, etherscanClient, err := NewMockClient()
 	if err != nil {

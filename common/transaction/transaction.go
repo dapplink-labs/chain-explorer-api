@@ -12,7 +12,7 @@ type TxResponse struct {
 	Txid                 string                `json:"txid"`
 	Height               string                `json:"height"`
 	TransactionTime      string                `json:"transactionTime"`
-	TransactionType      int                   `json:"transactionType"`
+	TransactionType      string                `json:"transactionType"`
 	Amount               string                `json:"amount"`
 	TransactionSymbol    string                `json:"transactionSymbol"`
 	MethodId             string                `json:"methodId"`

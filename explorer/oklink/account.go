@@ -30,7 +30,7 @@ func (cea *ChainExplorerAdaptor) GetAccountBalance(request *account.AccountBalan
 			TokenId:         "0x00",
 		}
 	} else {
-		apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance?chainShortName=%s&address=%s&protocolType=%s&limit=%d", request.ChainShortName, request.Account[0], request.ProtocolType[0], request.Limit[0])
+		apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance?chainShortName=%s&address=%s&tokenContractAddress=%s&protocolType=%s&limit=%d", request.ChainShortName, request.Account[0], request.ContractAddress[0], request.ProtocolType[0], request.Limit[0])
 		fmt.Println(apiUrl)
 		var responseData []AddressTokenBalanceData
 		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
@@ -59,7 +59,7 @@ func (cea *ChainExplorerAdaptor) GetMultiAccountBalance(request *account.Account
 		addressStr[i] = fmt.Sprintf("%s", v)
 	}
 	result := strings.Join(addressStr, ",")
-	if request.ContractAddress[0] != "0x00" {
+	if request.ContractAddress[0] == "0x00" {
 		apiUrl := fmt.Sprintf("api/v5/explorer/address/balance-multi?chainShortName=%s&address=%s", request.ChainShortName, result)
 		response := AddressSummaryResp{}
 		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, response)

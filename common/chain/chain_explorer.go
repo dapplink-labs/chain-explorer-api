@@ -14,9 +14,9 @@ type PageRequest struct {
 }
 
 type PageResponse struct {
-	Page      uint64 `json:"page"`
-	Limit     uint64 `json:"limit"`
-	TotalPage uint64 `json:"totalPage"`
+	Page      uint64 `json:"page,string"`
+	Limit     uint64 `json:"limit,string"`
+	TotalPage uint64 `json:"totalPage,string"`
 }
 
 type SortType string

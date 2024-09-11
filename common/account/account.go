@@ -45,18 +45,18 @@ type AccountUtxoResponse struct {
 	Index         string `json:"index"`
 }
 
-type Action string
+type ActionType string
 
 const (
-	OkLinkActionNormal   Action = "normal"
-	OkLinkActionInternal Action = "internal"
-	OkLinkActionToken    Action = "token"
+	OkLinkActionNormal   ActionType = "normal"
+	OkLinkActionInternal ActionType = "internal"
+	OkLinkActionToken    ActionType = "token"
 
-	EtherscanActionTxList         Action = "txlist"
-	EtherscanActionTxListInternal Action = "txlistinternal"
-	EtherscanActionTokenTx        Action = "tokentx"
-	EtherscanActionTokenNftTx     Action = "tokennfttx"
-	EtherscanActionToken1155Tx    Action = "token1155tx"
+	EtherscanActionTxList         ActionType = "txlist"
+	EtherscanActionTxListInternal ActionType = "txlistinternal"
+	EtherscanActionTokenTx        ActionType = "tokentx"
+	EtherscanActionTokenNftTx     ActionType = "tokennfttx"
+	EtherscanActionToken1155Tx    ActionType = "token1155tx"
 )
 
 type ProtocolType string
@@ -67,13 +67,20 @@ const (
 	ProtocolTypeToken1155 ProtocolType = "token_1155"
 )
 
+type IsFromToType string
+
+const (
+	From IsFromToType = "from"
+	To   IsFromToType = "to"
+)
+
 type AccountTxRequest struct {
 	chain.PageRequest
 
 	ExplorerName   string `json:"explorerName"`
 	ChainShortName string `json:"chainShortName"`
 	// normal internal token
-	Action Action         `json:"action"`
+	Action ActionType     `json:"action"`
 	Sort   chain.SortType `url:"sort"`
 
 	Address          string `json:"address"`

@@ -7,11 +7,12 @@ import (
 	"strconv"
 )
 
-//type ApiResponse[T any] struct {
-//	Status  string `json:"status"`
-//	Message string `json:"message"`
-//	Result  T      `json:"result"`
-//}
+type TransactionResponse[T any] struct {
+	Page            string `json:"page"`
+	Limit           string `json:"limit"`
+	TotalPage       string `json:"totalPage"`
+	TransactionList []T    `json:"transactionList"`
+}
 
 type AccountBalance struct {
 	Account string         `json:"account"`

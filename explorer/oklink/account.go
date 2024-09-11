@@ -2,7 +2,10 @@ package oklink
 
 import (
 	"fmt"
+	"github.com/dapplink-labs/chain-explorer-api/common/chain"
+	"github.com/dapplink-labs/chain-explorer-api/explorer/etherscan"
 	"math/big"
+	"strconv"
 	"strings"
 
 	"github.com/dapplink-labs/chain-explorer-api/common"
@@ -112,9 +115,8 @@ func (cea *ChainExplorerAdaptor) GetAccountUtxo(req *account.AccountUtxoRequest)
 
 func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxRequest) (*account.TransactionResponse[account.AccountTxResponse], error) {
 	type TransactionType = account.AccountTxResponse
-	type TransactionResponseType = account.TransactionResponse[TransactionType]
-	type ApiResponseType = ApiResponse[[]TransactionResponseType]
-	resp := &ApiResponseType{}
+	type TransactionResponseType = etherscan.TransactionResponse[TransactionType]
+	var resp []TransactionResponseType
 
 	// normal transaction
 	if request.Action == account.OkLinkActionNormal {
@@ -125,7 +127,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 		err := cea.baseClient.Call(ChainExplorerName, "", "", fullURL, nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
-			return &TransactionResponseType{}, nil
+			return &account.TransactionResponse[account.AccountTxResponse]{}, nil
 		}
 	}
 
@@ -137,7 +139,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 		err := cea.baseClient.Call(ChainExplorerName, "", "", fullURL, nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
-			return &TransactionResponseType{}, nil
+			return &account.TransactionResponse[account.AccountTxResponse]{}, nil
 		}
 	}
 
@@ -149,11 +151,38 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 		err := cea.baseClient.Call(ChainExplorerName, "", "", fullURL, nil, &resp)
 		if err != nil {
 			fmt.Println("err", err)
-			return &TransactionResponseType{}, nil
+			return &account.TransactionResponse[account.AccountTxResponse]{}, nil
 		}
 	}
-	if len(resp.Data) == 0 {
-		return &TransactionResponseType{}, nil
+	if len(resp) == 0 || len(resp[0].TransactionList) == 0 {
+		response := account.TransactionResponse[account.AccountTxResponse]{
+			PageResponse: chain.PageResponse{
+				Page:      request.Page,
+				Limit:     request.Limit,
+				TotalPage: request.Page,
+			},
+			TransactionList: []account.AccountTxResponse{},
+		}
+		return &response, nil
 	}
-	return &resp.Data[0], nil
+
+	tempResp := resp[0]
+	response := account.TransactionResponse[account.AccountTxResponse]{
+		PageResponse: chain.PageResponse{
+			Page:      StringToUint64(tempResp.Page, request.Page),
+			Limit:     StringToUint64(tempResp.Limit, request.Limit),
+			TotalPage: StringToUint64(tempResp.TotalPage, request.Page+1),
+		},
+		TransactionList: tempResp.TransactionList,
+	}
+	return &response, nil
+}
+
+func StringToUint64(s string, defaultValue uint64) uint64 {
+	value, err := strconv.ParseUint(s, 10, 64)
+	if err != nil {
+		fmt.Println("err", err)
+		return defaultValue
+	}
+	return value
 }

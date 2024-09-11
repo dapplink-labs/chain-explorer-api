@@ -1,6 +1,10 @@
 package account
 
-import "github.com/dapplink-labs/chain-explorer-api/common"
+import (
+	"github.com/dapplink-labs/chain-explorer-api/common"
+	"github.com/dapplink-labs/chain-explorer-api/common/chain"
+	"net/url"
+)
 
 type AccountBalanceRequest struct {
 	ChainShortName  string   `json:"chainShortName"`
@@ -39,44 +43,103 @@ type AccountUtxoResponse struct {
 	Index         string `json:"index"`
 }
 
+type Action string
+
+const (
+	ActionNormal   Action = "normal"
+	ActionInternal Action = "internal"
+	ActionToken    Action = "token"
+)
+
+type ProtocolType string
+
+const (
+	ProtocolTypeToken20   ProtocolType = "token_20"
+	ProtocolTypeToken721  ProtocolType = "token_721"
+	ProtocolTypeToken1155 ProtocolType = "token_1155"
+)
+
 type AccountTxRequest struct {
-	ExplorerName string `json:"explorerName"`
-	Action       string `json:"action"`
-	Address      string `json:"address"`
-	StartBlock   *int   `json:"startBlock"`
-	EndBlock     *int   `json:"endBlock"`
-	Page         int    `json:"page"`
-	Offset       int    `json:"offset"`
-	Desc         bool   `json:"desc"`
+	chain.PageRequest
+
+	ExplorerName   string `json:"explorerName"`
+	ChainShortName string `json:"chainShortName"`
+	// normal internal token
+	Action Action `json:"action"`
+
+	Address          string `json:"address"`
+	StartBlockHeight string `json:"startBlockHeight"`
+	EndBlockHeight   string `json:"endBlockHeight"`
+	IsFromOrTo       string `json:"isFromOrTo"`
+	// token_20 token_721 token_1155
+	ProtocolType         ProtocolType `json:"protocolType"`
+	TokenContractAddress string       `json:"tokenContractAddress"`
+}
+
+func (req *AccountTxRequest) ToQueryUrl() string {
+	params := url.Values{}
+
+	if req.ExplorerName != "" {
+		params.Add("explorerName", req.ExplorerName)
+	}
+	if req.ChainShortName != "" {
+		params.Add("chainShortName", req.ChainShortName)
+	}
+	if req.Action != "" {
+		params.Add("action", string(req.Action))
+	}
+	if req.Address != "" {
+		params.Add("address", req.Address)
+	}
+	if req.StartBlockHeight != "" {
+		params.Add("startBlockHeight", req.StartBlockHeight)
+	}
+	if req.EndBlockHeight != "" {
+		params.Add("endBlockHeight", req.EndBlockHeight)
+	}
+	if req.IsFromOrTo != "" {
+		params.Add("isFromOrTo", req.IsFromOrTo)
+	}
+	if req.ProtocolType != "" {
+		params.Add("protocolType", string(req.ProtocolType))
+	}
+	if req.TokenContractAddress != "" {
+		params.Add("tokenContractAddress", req.TokenContractAddress)
+	}
+	if req.Limit != "" {
+		params.Add("limit", req.Limit)
+	}
+	if req.Page != "" {
+		params.Add("page", req.Page)
+	}
+	return params.Encode()
 }
 
 type AccountTxResponse struct {
-	BlockNumber       int            `json:"blockNumber,string"`
-	TimeStamp         common.Time    `json:"timeStamp"`
-	Hash              string         `json:"hash"`
-	From              string         `json:"from"`
-	To                string         `json:"to"`
-	Value             *common.BigInt `json:"value"`
-	Nonce             int            `json:"nonce,string"`
-	BlockHash         string         `json:"blockHash"`
-	TransactionIndex  int            `json:"transactionIndex,string"`
-	ContractAddress   string         `json:"contract_address"`
-	Gas               int            `json:"gas,string"`
-	GasPrice          *common.BigInt `json:"gasPrice"`
-	GasUsed           int            `json:"gasUsed,string"`
-	CumulativeGasUsed int            `json:"cumulativeGasUsed,string"`
-	Input             string         `json:"input"`
-	Confirmations     int            `json:"confirmations,string"`
-	IsError           int            `json:"isError,string"`
-	TxReceiptStatus   string         `json:"txreceipt_status"`
-	TxType            string         `json:"tx_type"`
-	MethodId          string         `json:"methodId"`
-	FunctionName      string         `json:"functionName"`
-	TokenID           *common.BigInt `json:"tokenID"`
-	TokenName         string         `json:"tokenName"`
-	TokenSymbol       string         `json:"tokenSymbol"`
-	TokenDecimal      uint8          `json:"tokenDecimal,string"`
-	TokenValue        uint8          `json:"tokenValue,string"`
-	TraceID           string         `json:"traceId"`
-	ErrCode           string         `json:"errCode"`
+	TxId                 string `json:"txId"`
+	BlockHash            string `json:"blockHash"`
+	Height               string `json:"height"`
+	TransactionTime      string `json:"transactionTime"`
+	From                 string `json:"from"`
+	To                   string `json:"to"`
+	TokenContractAddress string `json:"tokenContractAddress"`
+	TokenId              string `json:"tokenId"`
+	Amount               string `json:"amount"`
+	Symbol               string `json:"symbol"`
+	IsFromContract       bool   `json:"isFromContract"`
+	IsToContract         bool   `json:"isToContract"`
+	Operation            string `json:"operation"`
+	MethodId             string `json:"methodId"`
+	Nonce                string `json:"nonce"`
+	GasPrice             string `json:"gasPrice"`
+	GasLimit             string `json:"gasLimit"`
+	GasUsed              string `json:"gasUsed"`
+	TxFee                string `json:"txFee"`
+	State                string `json:"state"`
+	TransactionType      string `json:"transactionType"`
+}
+
+type TransactionResponse[T any] struct {
+	chain.PageResponse
+	TransactionList []T `json:"transactionList"`
 }

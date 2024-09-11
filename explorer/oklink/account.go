@@ -99,6 +99,50 @@ func (cea *ChainExplorerAdaptor) GetAccountUtxo(req *account.AccountUtxoRequest)
 	return &account.AccountUtxoResponse{}, nil
 }
 
-func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxRequest) (*account.AccountTxResponse, error) {
-	return nil, nil
+func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxRequest) (*account.TransactionResponse[account.AccountTxResponse], error) {
+	type TransactionType = account.AccountTxResponse
+	type TransactionResponseType = account.TransactionResponse[TransactionType]
+	type ApiResponseType = ApiResponse[[]TransactionResponseType]
+	resp := &ApiResponseType{}
+
+	// normal transaction
+	if request.Action == account.ActionNormal {
+		baseURL := "/api/v5/explorer/address/normal-transaction-list"
+		fullURL := fmt.Sprintf("%s?%s", baseURL, request.ToQueryUrl())
+
+		//resp := &ApiResponse[[]account.TransactionResponse[account.NormalTransaction]]{}
+		err := cea.baseClient.Call(ChainExplorerName, "", "", fullURL, nil, &resp)
+		if err != nil {
+			fmt.Println("err", err)
+			return &TransactionResponseType{}, nil
+		}
+	}
+
+	// internal transaction
+	if request.Action == account.ActionInternal {
+		baseURL := "/api/v5/explorer/address/internal-transaction-list"
+		fullURL := fmt.Sprintf("%s?%s", baseURL, request.ToQueryUrl())
+
+		err := cea.baseClient.Call(ChainExplorerName, "", "", fullURL, nil, &resp)
+		if err != nil {
+			fmt.Println("err", err)
+			return &TransactionResponseType{}, nil
+		}
+	}
+
+	// token transaction
+	if request.Action == account.ActionToken {
+		baseURL := "/api/v5/explorer/address/internal-transaction-list"
+		fullURL := fmt.Sprintf("%s?%s", baseURL, request.ToQueryUrl())
+
+		err := cea.baseClient.Call(ChainExplorerName, "", "", fullURL, nil, &resp)
+		if err != nil {
+			fmt.Println("err", err)
+			return &TransactionResponseType{}, nil
+		}
+	}
+	if len(resp.Data) == 0 {
+		return &TransactionResponseType{}, nil
+	}
+	return &resp.Data[0], nil
 }

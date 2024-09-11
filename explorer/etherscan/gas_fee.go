@@ -1,6 +1,7 @@
 package etherscan
 
 import (
+	"errors"
 	"github.com/dapplink-labs/chain-explorer-api/common/gas_fee"
 )
 
@@ -10,6 +11,9 @@ func (cea *ChainExplorerAdaptor) GetEstimateGasFee(request *gas_fee.GasEstimateF
 
 	if err != nil {
 		return nil, err
+	}
+	if resp.Result == (GasTrackerGasOracleResp{}) {
+		return nil, errors.New("result is empty")
 	}
 	return &gas_fee.GasEstimateFeeResponse{
 		ChainFullName:         "Ethereum",

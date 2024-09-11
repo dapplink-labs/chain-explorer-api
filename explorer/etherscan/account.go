@@ -5,7 +5,6 @@ import (
 
 	"github.com/dapplink-labs/chain-explorer-api/common"
 	"github.com/dapplink-labs/chain-explorer-api/common/account"
-	"github.com/dapplink-labs/chain-explorer-api/explorer/base"
 )
 
 func (cea *ChainExplorerAdaptor) GetAccountBalance(req *account.AccountBalanceRequest) (*account.AccountBalanceResponse, error) {
@@ -88,39 +87,54 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 		param["sort"] = "asc"
 	}
 
-	var err error
 	// normal transaction
 	if request.Action == "txlist" {
-		var txs []base.NormalTx
-		err = cea.baseClient.Call("etherscan", "account", "txlist", "", param, &txs)
+		resp := &ApiResponse[[]NormalTransaction]{}
+		err := cea.baseClient.Call("etherscan", "account", "txlist", "", param, &resp)
+		if err != nil {
+			fmt.Println("err", err)
+			return &account.AccountTxResponse{}, nil
+		}
 	}
 
 	// internal transaction
 	if request.Action == "txlistinternal" {
-		var txs []base.InternalTx
-		err = cea.baseClient.Call("etherscan", "account", "txlistinternal", "", param, &txs)
+		resp := &ApiResponse[[]InternalTransaction]{}
+		err := cea.baseClient.Call("etherscan", "account", "txlistinternal", "", param, &resp)
+		if err != nil {
+			fmt.Println("err", err)
+			return &account.AccountTxResponse{}, nil
+		}
 	}
 
 	// token transaction
 	if request.Action == "tokentx" {
-		var txs []base.ERC20Transfer
-		err = cea.baseClient.Call("etherscan", "account", "tokentx", "", param, &txs)
+		resp := &ApiResponse[[]TokenErc20Transaction]{}
+		err := cea.baseClient.Call("etherscan", "account", "tokentx", "", param, &resp)
+		if err != nil {
+			fmt.Println("err", err)
+			return &account.AccountTxResponse{}, nil
+		}
 	}
 
 	// nft transaction
 	if request.Action == "tokennfttx" {
-		var txs []base.ERC721Transfer
-		err = cea.baseClient.Call("etherscan", "account", "tokennfttx", "", param, &txs)
+		resp := &ApiResponse[[]TokenErc721Transaction]{}
+		err := cea.baseClient.Call("etherscan", "account", "tokennfttx", "", param, &resp)
+		if err != nil {
+			fmt.Println("err", err)
+			return &account.AccountTxResponse{}, nil
+		}
 	}
 
 	// nft 1155 transaction
 	if request.Action == "token1155tx" {
-		var txs []base.ERC1155Transfer
-		err = cea.baseClient.Call("etherscan", "account", "token1155tx", "", param, &txs)
-	}
-
-	if err != nil {
-		fmt.Println("err", err)
+		resp := &ApiResponse[[]TokenErc721Transaction]{}
+		err := cea.baseClient.Call("etherscan", "account", "token1155tx", "", param, &resp)
+		if err != nil {
+			fmt.Println("err", err)
+			return &account.AccountTxResponse{}, nil
+		}
 	}
 
 	return nil, nil

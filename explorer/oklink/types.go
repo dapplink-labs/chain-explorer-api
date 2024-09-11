@@ -1,5 +1,11 @@
 package oklink
 
+type ApiResponse[T any] struct {
+	Code string `json:"code"`
+	Msg  string `json:"msg"`
+	Data T      `json:"data"`
+}
+
 // AddressSummaryData The Data field within the Response structure of
 // Fundamental blockchain data -> Address Data -> Get basic address details
 type AddressSummaryData struct {

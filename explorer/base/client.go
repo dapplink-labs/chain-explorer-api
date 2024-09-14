@@ -24,6 +24,14 @@ type OklinkEnvelope struct {
 	Msg  string          `json:"msg"`
 	Data json.RawMessage `json:"data"`
 }
+type SolScanEnvelope struct {
+	Success bool            `json:"success"`
+	Data    json.RawMessage `json:"data"`
+	Errors  struct {
+		Code    int    `json:"code"`
+		Message string `json:"message"`
+	} `json:"errors"`
+}
 
 type BaseClient struct {
 	coon          *http.Client
@@ -113,7 +121,15 @@ func (bc *BaseClient) Call(name, module, action, apiUrl string, param map[string
 		}
 		req.Header.Set("Ok-Access-Key", bc.key)
 	}
-
+	if name == "solscan" {
+		fmt.Println("apiKey and name", "apiKey:", bc.key, "name:", name)
+		req, httpErr = http.NewRequest(http.MethodGet, bc.CraftSolScanURL(apiUrl, param), http.NoBody)
+		if httpErr != nil {
+			err = common.WrapErr(httpErr, "http.NewRequest")
+			return
+		}
+		req.Header.Set("token", bc.key)
+	}
 	if bc.Verbose {
 		var reqDump []byte
 		reqDump, err = httputil.DumpRequestOut(req, false)
@@ -164,6 +180,11 @@ func (bc *BaseClient) Call(name, module, action, apiUrl string, param map[string
 		if err != nil {
 			fmt.Printf("handle oklink err", "err", err)
 		}
+	} else if name == "solscan" {
+		err = bc.HandleSolScanResponse(content.Bytes(), outcome)
+		if err != nil {
+			fmt.Printf("handle oklink err", "err", err)
+		}
 	} else {
 		fmt.Printf("unsuport type")
 	}
@@ -189,6 +210,16 @@ func (bc *BaseClient) CraftEtherScanURL(module, action string, param map[string]
 func (bc *BaseClient) CraftOkLinkURL(apiUrl string) (URL string) {
 	URL = bc.baseURL + apiUrl
 	fmt.Println("CraftEtherScanURL", URL)
+	return
+}
+
+func (bc *BaseClient) CraftSolScanURL(apiUrl string, param map[string]interface{}) (URL string) {
+	q := url.Values{}
+	for k, v := range param {
+		q[k] = common.ExtractValue(v)
+	}
+	URL = bc.baseURL + apiUrl + q.Encode()
+	fmt.Println("CraftSolScanURL", URL)
 	return
 }
 
@@ -230,6 +261,26 @@ func (bc *BaseClient) HandleOklinkResponse(data []byte, outcome interface{}) err
 	err = json.Unmarshal(oklink.Data, outcome)
 	if err != nil {
 		err = common.WrapErr(err, "json unmarshal oklink outcome")
+		return err
+	}
+	return nil
+}
+
+func (bc *BaseClient) HandleSolScanResponse(data []byte, outcome interface{}) error {
+	var solscan SolScanEnvelope
+	err := json.Unmarshal(data, &solscan)
+	if err != nil {
+		err = common.WrapErr(err, "json unmarshal solscan envelope")
+		return err
+	}
+	fmt.Println("Parse solscan data success", "code", solscan.Success)
+	if solscan.Success != true {
+		err = fmt.Errorf("solscan scan server: %s", solscan.Errors.Message)
+		return err
+	}
+	err = json.Unmarshal(solscan.Data, outcome)
+	if err != nil {
+		err = common.WrapErr(err, "json unmarshal solscan outcome")
 		return err
 	}
 	return nil

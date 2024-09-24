@@ -57,6 +57,9 @@ const (
 	EtherscanActionTokenTx        ActionType = "tokentx"
 	EtherscanActionTokenNftTx     ActionType = "tokennfttx"
 	EtherscanActionToken1155Tx    ActionType = "token1155tx"
+
+	SolScanActionSol ActionType = "sol"
+	SolScanActionSpl ActionType = "spl"
 )
 
 type ProtocolType string
@@ -74,9 +77,12 @@ const (
 	To   IsFromToType = "to"
 )
 
+type PageRequest struct {
+	Page  uint64 `json:"page"`
+	Limit uint64 `json:"limit"`
+}
 type AccountTxRequest struct {
 	chain.PageRequest
-
 	ExplorerName   string `json:"explorerName"`
 	ChainShortName string `json:"chainShortName"`
 	// normal internal token

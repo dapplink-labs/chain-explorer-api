@@ -30,6 +30,10 @@ func valueToStr(v reflect.Value) (str string) {
 		str = v.String()
 	case reflect.Int:
 		str = strconv.FormatInt(v.Int(), 10)
+	case reflect.Int64:
+		str = strconv.FormatInt(v.Int(), 10)
+	case reflect.Uint64:
+		str = strconv.FormatUint(v.Uint(), 10)
 	default:
 		panic(fmt.Sprintf("valueToStr: %v is of unexpected kind %q", v, v.Kind()))
 	}

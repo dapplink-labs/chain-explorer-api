@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/dapplink-labs/chain-explorer-api/common"
@@ -183,7 +184,7 @@ func (bc *BaseClient) Call(name, module, action, apiUrl string, param map[string
 	} else if name == "solscan" {
 		err = bc.HandleSolScanResponse(content.Bytes(), outcome)
 		if err != nil {
-			fmt.Printf("handle oklink err", "err", err)
+			fmt.Printf("handle solscan err", "err", err)
 		}
 	} else {
 		fmt.Printf("unsuport type")
@@ -218,7 +219,11 @@ func (bc *BaseClient) CraftSolScanURL(apiUrl string, param map[string]interface{
 	for k, v := range param {
 		q[k] = common.ExtractValue(v)
 	}
-	URL = bc.baseURL + apiUrl + q.Encode()
+	if strings.Contains(apiUrl, "?") {
+		URL = bc.baseURL + apiUrl + q.Encode()
+	} else {
+		URL = bc.baseURL + apiUrl + "?" + q.Encode()
+	}
 	fmt.Println("CraftSolScanURL", URL)
 	return
 }
@@ -267,20 +272,9 @@ func (bc *BaseClient) HandleOklinkResponse(data []byte, outcome interface{}) err
 }
 
 func (bc *BaseClient) HandleSolScanResponse(data []byte, outcome interface{}) error {
-	var solscan SolScanEnvelope
-	err := json.Unmarshal(data, &solscan)
+	err := json.Unmarshal(data, outcome)
 	if err != nil {
 		err = common.WrapErr(err, "json unmarshal solscan envelope")
-		return err
-	}
-	fmt.Println("Parse solscan data success", "code", solscan.Success)
-	if solscan.Success != true {
-		err = fmt.Errorf("solscan scan server: %s", solscan.Errors.Message)
-		return err
-	}
-	err = json.Unmarshal(solscan.Data, outcome)
-	if err != nil {
-		err = common.WrapErr(err, "json unmarshal solscan outcome")
 		return err
 	}
 	return nil

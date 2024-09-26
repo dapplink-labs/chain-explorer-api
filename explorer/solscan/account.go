@@ -103,7 +103,7 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 				Limit:     request.Limit,
 				TotalPage: resp.Total,
 			},
-			TransactionList: []account.AccountTxResponse{},
+			TransactionList: transactionList,
 		}, nil
 	} else {
 		resp := &AddressSplTransactionResp{}

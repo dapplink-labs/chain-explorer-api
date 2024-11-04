@@ -114,7 +114,7 @@ func (bc *BaseClient) Call(name, module, action, apiUrl string, param map[string
 	}
 
 	if name == "oklink" {
-		fmt.Println("apiKey and name", "apiKey:", bc.key, "name:", name)
+		fmt.Println("apiKey and name", "apiKey:", bc.key, "name:", name, "apiUrl:", apiUrl)
 		req, httpErr = http.NewRequest(http.MethodGet, bc.CraftOkLinkURL(apiUrl), http.NoBody)
 		if httpErr != nil {
 			err = common.WrapErr(httpErr, "http.NewRequest")

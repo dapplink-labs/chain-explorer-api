@@ -13,7 +13,7 @@ var (
 	EtherscanApiKey  = "HZEZGEPJJDA633N421AYW9NE8JFNZZC7JT"
 	EtherscanTimeout = time.Second * 20
 
-	OklinkBaseUrl = "https://www.oklink.com/"
+	OklinkBaseUrl = "https://www.oklink.com"
 	OklinkApiKey  = "5181d535-b68f-41cf-bbc6-25905e46b6a6"
 	OkTimeout     = time.Second * 20
 )

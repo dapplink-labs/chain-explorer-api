@@ -8,10 +8,13 @@ import (
 )
 
 type TransactionResponse[T any] struct {
-	Page            string `json:"page"`
-	Limit           string `json:"limit"`
-	TotalPage       string `json:"totalPage"`
-	TransactionList []T    `json:"transactionList"`
+	Page             string `json:"page"`
+	Limit            string `json:"limit"`
+	TotalPage        string `json:"totalPage"`
+	ChainFullName    string `json:"chainFullName"`
+	ChainShortName   string `json:"chainShortName"`
+	TransactionList  []T    `json:"transactionList"`
+	TransactionLists []T    `json:"transactionLists"`
 }
 
 type AccountBalance struct {

@@ -122,6 +122,10 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 			fmt.Println("err", err)
 			return &account.TransactionResponse[account.AccountTxResponse]{}, nil
 		}
+		// utxo is transactionLists, not transactionList
+		if len(resp) > 0 {
+			resp[0].TransactionList = resp[0].TransactionLists
+		}
 	}
 	// normal transaction
 	if request.Action == account.OkLinkActionNormal {

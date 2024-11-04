@@ -171,6 +171,7 @@ func (bc *BaseClient) Call(name, module, action, apiUrl string, param map[string
 		err = fmt.Errorf("response status %v %s, response body: %s", res.StatusCode, res.Status, content.String())
 		return
 	}
+	// When deserializing, The field names must be consistent
 	if name == "etherscan" {
 		err = bc.HandleEtherscanResponse(action, content.Bytes(), outcome)
 		if err != nil {

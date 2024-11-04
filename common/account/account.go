@@ -51,6 +51,7 @@ const (
 	OkLinkActionNormal   ActionType = "normal"
 	OkLinkActionInternal ActionType = "internal"
 	OkLinkActionToken    ActionType = "token"
+	OkLinkActionUtxo     ActionType = "utxo"
 
 	EtherscanActionTxList         ActionType = "txlist"
 	EtherscanActionTxListInternal ActionType = "txlistinternal"

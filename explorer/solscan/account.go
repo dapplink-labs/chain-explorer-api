@@ -54,13 +54,11 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 	if request.Limit > 50 {
 		return nil, fmt.Errorf("limit must be less than or equal to 50")
 	}
-
 	params := common.M{
 		"offset":  request.Page,
 		"limit":   request.Limit,
 		"account": request.Address,
 	}
-
 	if request.Action == account.SolScanActionSol {
 		resp := &AddressSolTransactionResp{}
 		err := cea.baseClient.Call(ChainExplorerName, "", "", "/v1.0/account/solTransfers", params, &resp)

@@ -113,7 +113,16 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 	type TransactionType = account.AccountTxResponse
 	type TransactionResponseType = etherscan.TransactionResponse[TransactionType]
 	var resp []TransactionResponseType
-
+	// utxo
+	if request.Action == account.OkLinkActionUtxo {
+		baseURL := "/api/v5/explorer/address/transaction-list"
+		fullURL := fmt.Sprintf("%s?%s", baseURL, request.ToQueryUrl())
+		err := cea.baseClient.Call(ChainExplorerName, "", "", fullURL, nil, &resp)
+		if err != nil {
+			fmt.Println("err", err)
+			return &account.TransactionResponse[account.AccountTxResponse]{}, nil
+		}
+	}
 	// normal transaction
 	if request.Action == account.OkLinkActionNormal {
 		baseURL := "/api/v5/explorer/address/normal-transaction-list"

@@ -33,6 +33,7 @@ func TestGetAccountBalance(t *testing.T) {
 		t.Error(err)
 	}
 	fmt.Println("==========etherscanResp============")
+	fmt.Println(etherscanResp.BalanceStr)
 	fmt.Println(etherscanResp.Balance.Int())
 	fmt.Println(etherscanResp.Account)
 	fmt.Println(etherscanResp.Symbol)

@@ -34,6 +34,7 @@ func (cea *ChainExplorerAdaptor) GetAccountBalance(req *account.AccountBalanceRe
 	return &account.AccountBalanceResponse{
 		Account:         req.Account[0],
 		Balance:         balance,
+		BalanceStr:      balance.Int().String(),
 		Symbol:          req.Symbol[0],
 		ContractAddress: req.ContractAddress[0],
 		TokenId:         "0x0",

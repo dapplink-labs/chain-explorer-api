@@ -12,7 +12,7 @@ func TestGetAccountBalance(t *testing.T) {
 	if err != nil {
 		fmt.Println("new mock client fail", "err", err)
 	}
-	accountItem := []string{"0xD79053a14BC465d9C1434d4A4fAbdeA7b6a2A94b"}
+	accountItem := []string{"0x2Fc617E933a52713247CE25730f6695920B3befe"}
 	symbol := []string{"ETH"}
 	contractAddress := []string{"0x00"}
 	protocolType := []string{""}

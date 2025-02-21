@@ -210,7 +210,13 @@ func (bc *BaseClient) CraftEtherScanURL(module, action string, param map[string]
 }
 
 func (bc *BaseClient) CraftOkLinkURL(apiUrl string) (URL string) {
-	URL = bc.baseURL + apiUrl
+	// 确保 baseURL 末尾没有斜杠
+	baseURL := strings.TrimRight(bc.baseURL, "/")
+	// 确保 apiUrl 开头有斜杠
+	if !strings.HasPrefix(apiUrl, "/") {
+		apiUrl = "/" + apiUrl
+	}
+	URL = baseURL + apiUrl
 	fmt.Println("CraftEtherScanURL", URL)
 	return
 }

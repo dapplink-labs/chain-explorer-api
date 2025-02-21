@@ -14,7 +14,7 @@ func (cea *ChainExplorerAdaptor) GetTokenList(request *token.TokenRequest) ([]to
 		apiUrl := fmt.Sprintf("api/v5/explorer/inscription/token-list?chainShortName=%s&protocolType=%s&tokenInscriptionId=%s&symbol=%s&projectId=%s&page=%s&limit=%s",
 			request.ChainShortName, _protocolType, request.TokenInscriptionId, request.Symbol, request.ProjectId, request.Page, request.Limit)
 		var responseData []TokenListData
-		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
+		err := cea.baseClient.Call(ChainExplorerName, "", "", apiUrl, nil, &responseData)
 		if err != nil {
 			return nil, err
 		}
@@ -32,7 +32,7 @@ func (cea *ChainExplorerAdaptor) GetTokenList(request *token.TokenRequest) ([]to
 		apiUrl := fmt.Sprintf("api/v5/explorer/token/token-list?chainShortName=%s&protocolType=%s&tokenContractAddress=%s&page=%s&limit=%s",
 			request.ChainShortName, _protocolType, request.ContractAddress, request.Page, request.Limit)
 		var responseData []TokenListData
-		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
+		err := cea.baseClient.Call(ChainExplorerName, "", "", apiUrl, nil, &responseData)
 		if err != nil {
 			return nil, err
 		}

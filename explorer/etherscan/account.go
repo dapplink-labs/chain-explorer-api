@@ -1,6 +1,7 @@
 package etherscan
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/dapplink-labs/chain-explorer-api/common"
@@ -183,4 +184,9 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 		PageResponse:    pageResponse,
 		TransactionList: transactionList,
 	}, nil
+}
+
+func (cea *ChainExplorerAdaptor) GetAccountBalanceV2(request *account.GetAccountBalanceRequest) (*account.GetAccountBalanceResponse, error) {
+	//todo implement
+	return nil, errors.New("not implement")
 }

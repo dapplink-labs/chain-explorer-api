@@ -1,12 +1,14 @@
 package solscan
 
 import (
+	"errors"
 	"fmt"
+	"math/big"
+	"strconv"
+
 	"github.com/dapplink-labs/chain-explorer-api/common"
 	"github.com/dapplink-labs/chain-explorer-api/common/account"
 	"github.com/dapplink-labs/chain-explorer-api/common/chain"
-	"math/big"
-	"strconv"
 )
 
 // GetAccountBalance 获取账户余额
@@ -141,4 +143,9 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 			TransactionList: transactionList,
 		}, nil
 	}
+}
+
+func (cea *ChainExplorerAdaptor) GetAccountBalanceV2(request *account.GetAccountBalanceRequest) (*account.GetAccountBalanceResponse, error) {
+	//todo implement
+	return nil, errors.New("not implement")
 }

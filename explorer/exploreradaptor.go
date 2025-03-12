@@ -25,4 +25,8 @@ type ChainExplorerAdaptor interface {
 	GetEstimateGasFee(req *gas_fee.GasEstimateFeeRequest) (*gas_fee.GasEstimateFeeResponse, error)
 	// GetTxByHash 根据交易hash获取交易信息
 	GetTxByHash(request *transaction.TxRequest) (*transaction.TxResponse, error)
+	// GetAccountBalanceV2
+	GetAccountBalanceV2(req *account.GetAccountBalanceRequest) (*account.GetAccountBalanceResponse, error)
+	// GetNFTDetails
+	GetNFTDetails(req *token.GetNFTDetailsRequest) (*token.GetNFTDetailsResponse, error)
 }

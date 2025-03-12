@@ -47,3 +47,23 @@ func TestOklinkGetETHToken(t *testing.T) {
 	}
 	fmt.Println("===========okRespList===========")
 }
+
+func TestOklinkGetNFTDetails(t *testing.T) {
+	oklinkClient, _, err := NewMockClient()
+	if err != nil {
+		fmt.Println("new mock client fail", "err", err)
+	}
+	trps := &token.GetNFTDetailsRequest{
+		ExplorerName:    "oklink",
+		ChainShortName:  "ETH",
+		ContractAddress: "0xed5af388653567af2f388e6224dc7c4b3241c544",
+		TokenId:         "5401",
+	}
+	okResp, err := oklinkClient.GetNFTDetails(trps)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println("=========okRespList=============")
+	fmt.Println(okResp)
+	fmt.Println("===========okRespList===========")
+}

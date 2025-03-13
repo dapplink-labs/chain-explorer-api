@@ -28,6 +28,33 @@ type AccountBalanceResponse struct {
 	TokenId         string         `json:"token_id"`
 }
 
+type GetAccountBalanceRequest struct {
+	ChainShortName  string   `json:"chainShortName"`
+	ExplorerName    string   `json:"explorerName"`
+	Account         []string `json:"account"`
+	ContractAddress string   `json:"contractAddress"`
+	TokenType       string   `json:"tokenType"`    // 原生代币：native 合约代币：contract
+	ProtocolType    string   `json:"protocolType"` // 20代币：token_20; 721代币：token_721; 1155代币：token_1155;
+	Page            string   `json:"page"`
+	Limit           string   `json:"limit"`
+}
+
+type GetAccountBalanceResponse struct {
+	Page        string    `json:"page"`
+	Limit       string    `json:"limit"`
+	TotalPage   string    `json:"totalPage"`
+	BalanceList []Balance `json:"balanceList"`
+}
+
+type Balance struct {
+	Account         string         `json:"account"`
+	Balance         *common.BigInt `json:"balance"`
+	BalanceStr      string         `json:"balanceStr"`
+	Symbol          string         `json:"symbol"`
+	ContractAddress string         `json:"contractAddress"`
+	TokenId         string         `json:"token_id"`
+}
+
 type AccountUtxoRequest struct {
 	ExplorerName   string `json:"explorerName"`
 	ChainShortName string `json:"chainShortName"`

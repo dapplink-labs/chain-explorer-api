@@ -2,9 +2,10 @@ package solscan
 
 import (
 	"fmt"
+	"strconv"
+
 	"github.com/dapplink-labs/chain-explorer-api/common"
 	"github.com/dapplink-labs/chain-explorer-api/common/token"
-	"strconv"
 )
 
 var pageSizes = []string{"10", "20", "30", "40", "60", "100"}
@@ -44,4 +45,9 @@ func (cea *ChainExplorerAdaptor) GetTokenList(req *token.TokenRequest) ([]token.
 		})
 	}
 	return responseList, nil
+}
+
+func (cea *ChainExplorerAdaptor) GetNFTDetails(request *token.GetNFTDetailsRequest) (*token.GetNFTDetailsResponse, error) {
+	//todo implement
+	return nil, fmt.Errorf("not implemented")
 }

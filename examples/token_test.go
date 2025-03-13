@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -45,5 +46,26 @@ func TestOklinkGetETHToken(t *testing.T) {
 		fmt.Println(v.TokenContractAddress)
 		fmt.Println(v.TotalSupply)
 	}
+	fmt.Println("===========okRespList===========")
+}
+
+func TestOklinkGetNFTDetails(t *testing.T) {
+	oklinkClient, _, err := NewMockClient()
+	if err != nil {
+		fmt.Println("new mock client fail", "err", err)
+	}
+	trps := &token.GetNFTDetailsRequest{
+		ExplorerName:    "oklink",
+		ChainShortName:  "ETH",
+		ContractAddress: "0xf39c410dac956ba98004f411e182fb4eed595270",
+		TokenId:         "956",
+	}
+	okResp, err := oklinkClient.GetNFTDetails(trps)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println("=========okRespList=============")
+	jsonBytes, _ := json.Marshal(okResp)
+	fmt.Printf("%s\n", string(jsonBytes))
 	fmt.Println("===========okRespList===========")
 }

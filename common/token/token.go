@@ -66,6 +66,48 @@ type TokenResponse struct {
 	Decimal              string `json:"decimal"`     //  default 1
 }
 
+type Token721Response struct {
+	TokenSymbol   string `json:"TokenSymbol"`
+	TokenAddress  string `json:"TokenAddress"`
+	TokenName     string `json:"TokenName"`
+	TokenQuantity string `json:"TokenQuantity"`
+}
+
+type GetNFTDetailsRequest struct {
+	ExplorerName    string `json:"explorerName"`
+	ChainShortName  string `json:"chainShortName"`
+	ContractAddress string `json:"contractAddress"`
+	TokenId         string `json:"tokenId"`
+}
+
+type GetNFTDetailsResponse struct {
+	CollectionName       string       `json:"collectionName"`       // Project name (full name)
+	TokenContractAddress string       `json:"tokenContractAddress"` // Project contract address
+	TokenId              string       `json:"tokenId"`              // NFT token ID
+	ProtocolType         string       `json:"protocolType"`         // NFT contract type
+	Token                string       `json:"token"`                // Token name
+	OwnerAddress         string       `json:"ownerAddress"`         // NFT holder address
+	LogoUrl              string       `json:"logoUrl"`              // NFT image URL
+	LastPrice            string       `json:"lastPrice"`            // Latest price of the NFT
+	FloorPrice           string       `json:"floorPrice"`           // Floor price of the NFT
+	LastPriceUnit        string       `json:"lastPriceUnit"`        // Price unit
+	LastTransactionTime  string       `json:"lastTransactionTime"`  // Latest transaction time, Unix timestamp in milliseconds, e.g., 1597026383085
+	LastHeight           string       `json:"lastHeight"`           // Block height of the latest transaction
+	LastTxid             string       `json:"lastTxid"`             // Hash of the latest transaction
+	TransactionCount     string       `json:"transactionCount"`     // Number of transactions for this NFT
+	MinterAddress        string       `json:"minterAddress"`        // NFT creator address
+	StorageMethod        string       `json:"storageMethod"`        // NFT storage method
+	MintTime             string       `json:"mintTime"`             // NFT minting time
+	Title                string       `json:"title"`                // Name property in NFT metadata, can be ENS or DID
+	Attributes           []Attributes `json:"attributes"`           // Attributes
+}
+
+type Attributes struct {
+	TraitType  string `json:"traitType"`  // Attribute category
+	Value      string `json:"value"`      // Attribute value
+	Prevalence string `json:"prevalence"` // Attribute rarity, expressed as decimal, 0.1=10%
+}
+
 // IsStandardProtocol Determine whether the given protocol type is a standard token protocol
 func IsStandardProtocol(protocolType string) bool {
 	switch protocolType {

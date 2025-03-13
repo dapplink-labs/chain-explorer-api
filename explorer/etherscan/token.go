@@ -2,6 +2,7 @@ package etherscan
 
 import (
 	"fmt"
+
 	"github.com/dapplink-labs/chain-explorer-api/common"
 	"github.com/dapplink-labs/chain-explorer-api/common/token"
 )
@@ -27,4 +28,8 @@ func (cea *ChainExplorerAdaptor) GetTokenList(req *token.TokenRequest) ([]token.
 		tokenList = append(tokenList, tokenItem)
 	}
 	return tokenList, nil
+}
+
+func (cea *ChainExplorerAdaptor) GetNFTDetails(request *token.GetNFTDetailsRequest) (*token.GetNFTDetailsResponse, error) {
+	return nil, fmt.Errorf("not support")
 }

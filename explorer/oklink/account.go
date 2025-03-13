@@ -1,6 +1,7 @@
 package oklink
 
 import (
+	"errors"
 	"fmt"
 	"math/big"
 	"strconv"
@@ -33,7 +34,7 @@ func (cea *ChainExplorerAdaptor) GetAccountBalance(request *account.AccountBalan
 			TokenId:         "0x00",
 		}
 	} else {
-		apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance?chainShortName=%s&address=%s&tokenContractAddress=%s&protocolType=%s&limit=%d", request.ChainShortName, request.Account[0], request.ContractAddress[0], request.ProtocolType[0], request.Limit[0])
+		apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance?chainShortName=%s&address=%s&tokenContractAddress=%s&protocolType=%s&limit=%s", request.ChainShortName, request.Account[0], request.ContractAddress[0], request.ProtocolType[0], request.Limit[0])
 		fmt.Println(apiUrl)
 		var responseData []AddressTokenBalanceData
 		err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
@@ -194,4 +195,152 @@ func StringToUint64(s string, defaultValue uint64) uint64 {
 		return defaultValue
 	}
 	return value
+}
+
+func (cea *ChainExplorerAdaptor) GetAccountBalanceV2(request *account.GetAccountBalanceRequest) (*account.GetAccountBalanceResponse, error) {
+	var result *account.GetAccountBalanceResponse
+	accountStr := ""
+	if len(request.Account) == 0 {
+		return nil, errors.New("account not found")
+	} else if len(request.Account) > 50 {
+		return nil, errors.New("account num must <= 50")
+	} else {
+		accountStr = strings.Join(request.Account, ",")
+	}
+	if request.TokenType == "contract" {
+		if len(request.Account) > 1 {
+			apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance-multi?chainShortName=%s&address=%s", request.ChainShortName, accountStr)
+			if request.ProtocolType != "" {
+				apiUrl += fmt.Sprintf("&protocolType=%s", request.ProtocolType)
+			}
+			if request.Page != "" {
+				apiUrl += fmt.Sprintf("&page=%s", request.Page)
+			}
+			if request.Limit != "" {
+				apiUrl += fmt.Sprintf("&limit=%s", request.Limit)
+			}
+			fmt.Println(apiUrl)
+			var responseData []AddressTokenBalanceMultiData
+			err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
+			if err != nil {
+				return nil, err
+			}
+			if len(responseData) > 0 {
+				data := responseData[0]
+				var balanceItems []account.Balance
+				for _, token := range data.BalanceList {
+					balance, _ := new(big.Int).SetString(token.HoldingAmount, 10)
+					balanceItems = append(balanceItems, account.Balance{
+						Account:         token.Address,
+						Balance:         (*common.BigInt)(balance),
+						BalanceStr:      token.HoldingAmount,
+						ContractAddress: token.TokenContractAddress,
+					})
+				}
+				result = &account.GetAccountBalanceResponse{
+					Page:        data.Page,
+					Limit:       data.Limit,
+					TotalPage:   data.TotalPage,
+					BalanceList: balanceItems,
+				}
+			}
+		} else {
+			apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance?chainShortName=%s&address=%s&protocolType=%s", request.ChainShortName, accountStr, request.ProtocolType)
+			if request.ContractAddress != "" {
+				apiUrl += fmt.Sprintf("&tokenContractAddress=%s", request.ContractAddress)
+			}
+			if request.Page != "" {
+				apiUrl += fmt.Sprintf("&page=%s", request.Page)
+			}
+			if request.Limit != "" {
+				apiUrl += fmt.Sprintf("&limit=%s", request.Limit)
+			}
+			fmt.Println(apiUrl)
+			var responseData []AddressTokenBalanceData
+			err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
+			if err != nil {
+				fmt.Println("error is:", err)
+				return nil, err
+			}
+			if len(responseData) > 0 {
+				data := responseData[0]
+				var balanceItems []account.Balance
+				for _, item := range data.TokenList {
+					balance, _ := new(big.Int).SetString(item.HoldingAmount, 10)
+					balanceItems = append(balanceItems, account.Balance{
+						Account:         accountStr,
+						Balance:         (*common.BigInt)(balance),
+						BalanceStr:      item.HoldingAmount,
+						Symbol:          item.Symbol,
+						ContractAddress: item.TokenContractAddress,
+						TokenId:         item.TokenId,
+					})
+				}
+				result = &account.GetAccountBalanceResponse{
+					Page:        data.Page,
+					Limit:       data.Limit,
+					TotalPage:   data.TotalPage,
+					BalanceList: balanceItems,
+				}
+			}
+		}
+	} else {
+		var balanceItems []account.Balance
+		if len(request.Account) > 1 {
+			apiUrl := fmt.Sprintf("api/v5/explorer/address/balance-multi?chainShortName=%s&address=%s", request.ChainShortName, accountStr)
+			var responseData []AddressBalanceMultiData
+			err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
+			if err != nil {
+				return nil, err
+			}
+			if len(responseData) > 0 {
+				data := responseData[0]
+				for _, value := range data.BalanceList {
+					balance, _ := new(big.Int).SetString(value.Balance, 10)
+					balanceItems = append(balanceItems,
+						account.Balance{
+							Account:    value.Address,
+							Balance:    (*common.BigInt)(balance),
+							BalanceStr: value.Balance,
+							Symbol:     data.Symbol})
+				}
+			} else {
+				balanceItems = append(balanceItems,
+					account.Balance{
+						Account:    "",
+						Balance:    (*common.BigInt)(big.NewInt(0)),
+						BalanceStr: "0",
+						Symbol:     ""})
+			}
+		} else {
+			apiUrl := fmt.Sprintf("api/v5/explorer/address/address-summary?chainShortName=%s&address=%s", request.ChainShortName, accountStr)
+			var responseData []AddressSummaryData
+			err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
+			if err != nil {
+				fmt.Println("error is:", err)
+				return nil, err
+			}
+			if len(responseData) > 0 {
+				data := responseData[0]
+				balance, _ := new(big.Int).SetString(data.Balance, 10)
+				balanceItems = append(balanceItems,
+					account.Balance{
+						Account:    data.Address,
+						Balance:    (*common.BigInt)(balance),
+						BalanceStr: data.Balance,
+						Symbol:     data.BalanceSymbol})
+			} else {
+				balanceItems = append(balanceItems,
+					account.Balance{
+						Account:    "",
+						Balance:    (*common.BigInt)(big.NewInt(0)),
+						BalanceStr: "0",
+						Symbol:     ""})
+			}
+		}
+		result = &account.GetAccountBalanceResponse{
+			BalanceList: balanceItems,
+		}
+	}
+	return result, nil
 }

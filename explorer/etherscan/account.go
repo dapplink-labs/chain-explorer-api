@@ -1,11 +1,14 @@
 package etherscan
 
 import (
+	"errors"
 	"fmt"
+	"math/big"
 
 	"github.com/dapplink-labs/chain-explorer-api/common"
 	"github.com/dapplink-labs/chain-explorer-api/common/account"
 	"github.com/dapplink-labs/chain-explorer-api/common/chain"
+	"github.com/dapplink-labs/chain-explorer-api/common/token"
 )
 
 func (cea *ChainExplorerAdaptor) GetAccountBalance(req *account.AccountBalanceRequest) (*account.AccountBalanceResponse, error) {
@@ -183,4 +186,132 @@ func (cea *ChainExplorerAdaptor) GetTxByAddress(request *account.AccountTxReques
 		PageResponse:    pageResponse,
 		TransactionList: transactionList,
 	}, nil
+}
+
+func (cea *ChainExplorerAdaptor) GetAccountBalanceV2(request *account.GetAccountBalanceRequest) (*account.GetAccountBalanceResponse, error) {
+	var result *account.GetAccountBalanceResponse
+	if request.TokenType == "contract" {
+		if len(request.Account) > 1 {
+			return nil, errors.New("etherscan not support multi account contract token balance")
+		} else {
+			switch request.ProtocolType {
+			case "token_20":
+				balance := new(common.BigInt)
+				param := common.M{
+					"contractaddress": request.ContractAddress,
+					"address":         request.Account[0],
+					"tag":             "latest",
+				}
+				err := cea.baseClient.Call("etherscan", "account", "tokenbalance", "", param, &balance)
+				if err != nil {
+					fmt.Println("err", err)
+					return nil, err
+				}
+				symbol := ""
+				tokenInfo, _ := cea.GetTokenList(&token.TokenRequest{
+					ContractAddress: request.ContractAddress,
+				})
+				if len(tokenInfo) > 0 {
+					symbol = tokenInfo[0].Symbol
+				}
+				var balanceItems []account.Balance
+				balanceItems = append(balanceItems, account.Balance{
+					Account:         request.Account[0],
+					Balance:         balance,
+					BalanceStr:      balance.Int().String(),
+					Symbol:          symbol,
+					ContractAddress: request.ContractAddress,
+				})
+				result = &account.GetAccountBalanceResponse{
+					Page:        "1",
+					Limit:       "1",
+					TotalPage:   "1",
+					BalanceList: balanceItems,
+				}
+			case "token_721":
+				var token721List []token.Token721Response
+				param := common.M{
+					"address": request.Account[0],
+					"page":    request.Page,
+					"offset":  request.Limit,
+				}
+				err := cea.baseClient.Call("etherscan", "account", "addresstokennftbalance", "", param, &token721List)
+				if err != nil {
+					fmt.Println("err", err)
+					return nil, err
+				}
+				var balanceItems []account.Balance
+				for _, token721 := range token721List {
+					balance, _ := new(big.Int).SetString(token721.TokenQuantity, 10)
+					balanceItems = append(balanceItems, account.Balance{
+						Account:         request.Account[0],
+						Balance:         (*common.BigInt)(balance),
+						BalanceStr:      token721.TokenQuantity,
+						Symbol:          token721.TokenSymbol,
+						ContractAddress: token721.TokenAddress,
+					})
+				}
+				result = &account.GetAccountBalanceResponse{
+					Page:        request.Page,
+					Limit:       request.Limit,
+					TotalPage:   "",
+					BalanceList: balanceItems,
+				}
+			case "token_1155":
+				return nil, errors.New("etherscan not support account contract token_1155 balance")
+			}
+		}
+	} else {
+		var balanceItems []account.Balance
+		if len(request.Account) > 1 {
+			param := common.M{
+				"tag":     "latest",
+				"address": request.Account,
+			}
+			balances := make([]AccountBalance, 0, len(request.Account))
+			err := cea.baseClient.Call("etherscan", "account", "balancemulti", "", param, &balances)
+			if err != nil {
+				fmt.Println("err", err)
+				return nil, err
+			}
+			if len(balances) > 0 {
+				for _, balance := range balances {
+					balanceItems = append(balanceItems,
+						account.Balance{
+							Account:    balance.Account,
+							Balance:    balance.Balance,
+							BalanceStr: balance.Balance.Int().String(),
+							Symbol:     "ETH"})
+				}
+			} else {
+				balanceItems = append(balanceItems,
+					account.Balance{
+						Account:    "",
+						Balance:    (*common.BigInt)(big.NewInt(0)),
+						BalanceStr: "0",
+						Symbol:     "ETH"})
+			}
+		} else {
+			balance := new(common.BigInt)
+			param := common.M{
+				"tag":     "latest",
+				"address": request.Account[0],
+			}
+			err := cea.baseClient.Call("etherscan", "account", "balance", "", param, balance)
+			if err != nil {
+				fmt.Println("err", err)
+				return nil, err
+			}
+			balanceItems = append(balanceItems,
+				account.Balance{
+					Account:    request.Account[0],
+					Balance:    balance,
+					BalanceStr: balance.Int().String(),
+					Symbol:     "ETH"})
+		}
+		result = &account.GetAccountBalanceResponse{
+			BalanceList: balanceItems,
+		}
+	}
+	return result, nil
 }

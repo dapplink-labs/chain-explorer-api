@@ -32,9 +32,9 @@ type GetAccountBalanceRequest struct {
 	ChainShortName  string   `json:"chainShortName"`
 	ExplorerName    string   `json:"explorerName"`
 	Account         []string `json:"account"`
-	Symbol          string   `json:"symbol"`
 	ContractAddress string   `json:"contractAddress"`
-	ProtocolType    string   `json:"protocolType"`
+	TokenType       string   `json:"tokenType"`    // 原生代币：native 合约代币：contract
+	ProtocolType    string   `json:"protocolType"` // 20代币：token_20; 721代币：token_721; 1155代币：token_1155;
 	Page            string   `json:"page"`
 	Limit           string   `json:"limit"`
 }

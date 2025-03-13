@@ -1,10 +1,11 @@
 package etherscan
 
 import (
-	"github.com/dapplink-labs/chain-explorer-api/common"
-	"github.com/dapplink-labs/chain-explorer-api/common/chain"
 	"net/url"
 	"strconv"
+
+	"github.com/dapplink-labs/chain-explorer-api/common"
+	"github.com/dapplink-labs/chain-explorer-api/common/chain"
 )
 
 type TransactionResponse[T any] struct {

@@ -66,6 +66,13 @@ type TokenResponse struct {
 	Decimal              string `json:"decimal"`     //  default 1
 }
 
+type Token721Response struct {
+	TokenSymbol   string `json:"TokenSymbol"`
+	TokenAddress  string `json:"TokenAddress"`
+	TokenName     string `json:"TokenName"`
+	TokenQuantity string `json:"TokenQuantity"`
+}
+
 type GetNFTDetailsRequest struct {
 	ExplorerName    string `json:"explorerName"`
 	ChainShortName  string `json:"chainShortName"`

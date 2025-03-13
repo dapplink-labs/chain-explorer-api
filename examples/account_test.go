@@ -176,39 +176,59 @@ func TestTokenGetMultiAccountBalance(t *testing.T) {
 }
 
 func TestGetAccountBalanceV2(t *testing.T) {
-	oklinkClient, _, err := NewMockClient()
+	oklinkClient, etherscanClient, err := NewMockClient()
 	if err != nil {
 		fmt.Println("new mock client fail", "err", err)
 	}
-	//accountItem := []string{"0x28C6c06298d514Db089934071355E5743bf21d60", "0xF17ACEd3c7A8DAA29ebb90Db8D1b6efD8C364a18"}
+	// accountItem := []string{"0x28C6c06298d514Db089934071355E5743bf21d60", "0xF17ACEd3c7A8DAA29ebb90Db8D1b6efD8C364a18"}
 	accountItem := []string{"0x4D392a08f8198a8E56c58BDaB6D01E99Ab33c086"}
 	acbr := &account.GetAccountBalanceRequest{
 		ChainShortName:  "ETH",
 		ExplorerName:    "etherescan",
 		Account:         accountItem,
-		Symbol:          "ETH",
 		ContractAddress: "0xF39c410Dac956BA98004f411E182FB4EEd595270",
+		TokenType:       "contract",
 		ProtocolType:    "token_721",
 		Page:            "1",
 		Limit:           "10",
 	}
-	//etherscanResp, err := etherscanClient.GetAccountBalanceV2(acbr)
-	//if err != nil {
-	//	t.Error(err)
-	//}
-	//fmt.Println("==========etherscanResp============")
-	//fmt.Println(etherscanResp.BalanceStr)
-	//fmt.Println(etherscanResp.Balance.Int())
-	//fmt.Println(etherscanResp.Account)
-	//fmt.Println(etherscanResp.Symbol)
-	//fmt.Println("===========etherscanResp===========")
+	// accountItem := []string{"0xE0554a476A092703abdB3Ef35c80e0D76d32939F"}
+	// acbr := &account.GetAccountBalanceRequest{
+	// 	ChainShortName:  "ETH",
+	// 	ExplorerName:    "etherescan",
+	// 	Account:         accountItem,
+	// 	ContractAddress: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48",
+	// 	TokenType:       "contract",
+	// 	ProtocolType:    "token_20",
+	// 	Page:            "1",
+	// 	Limit:           "10",
+	// }
+	// accountItem := []string{"0x5eE84D30c7EE57F63f71c92247Ff31f95E26916B"}
+	// acbr := &account.GetAccountBalanceRequest{
+	// 	ChainShortName:  "ETH",
+	// 	ExplorerName:    "etherescan",
+	// 	Account:         accountItem,
+	// 	ContractAddress: "",
+	// 	TokenType:       "native",
+	// 	ProtocolType:    "",
+	// 	Page:            "1",
+	// 	Limit:           "10",
+	// }
+	etherscanResp, err := etherscanClient.GetAccountBalanceV2(acbr)
+	if err != nil {
+		t.Error(err)
+	}
+	fmt.Println("==========etherscanResp============")
+	jsonBytes, _ := json.Marshal(etherscanResp)
+	fmt.Printf("%s\n", string(jsonBytes))
+	fmt.Println("===========etherscanResp===========")
 
 	oklinkResp, err := oklinkClient.GetAccountBalanceV2(acbr)
 	if err != nil {
 		t.Error(err)
 	}
 	fmt.Println("==========oklinkResp============")
-	jsonBytes, _ := json.Marshal(oklinkResp)
+	jsonBytes, _ = json.Marshal(oklinkResp)
 	fmt.Printf("%s\n", string(jsonBytes))
 	fmt.Println("==========oklinkResp============")
 }

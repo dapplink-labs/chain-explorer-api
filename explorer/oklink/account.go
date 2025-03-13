@@ -207,50 +207,7 @@ func (cea *ChainExplorerAdaptor) GetAccountBalanceV2(request *account.GetAccount
 	} else {
 		accountStr = strings.Join(request.Account, ",")
 	}
-	if request.ContractAddress == "0x00" || request.ContractAddress == "" {
-		var balanceItems []account.Balance
-		if len(request.Account) > 1 {
-			apiUrl := fmt.Sprintf("api/v5/explorer/address/balance-multi?chainShortName=%s&address=%s", request.ChainShortName, accountStr)
-			var responseData []AddressBalanceMultiData
-			err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
-			if err != nil {
-				return nil, err
-			}
-			if len(responseData) > 0 {
-				data := responseData[0]
-				for _, value := range data.BalanceList {
-					balance, _ := new(big.Int).SetString(value.Balance, 10)
-					balanceItems = append(balanceItems,
-						account.Balance{
-							Account:    value.Address,
-							Balance:    (*common.BigInt)(balance),
-							BalanceStr: value.Balance,
-							Symbol:     data.Symbol})
-				}
-			}
-		} else {
-			apiUrl := fmt.Sprintf("api/v5/explorer/address/address-summary?chainShortName=%s&address=%s", request.ChainShortName, accountStr)
-			var responseData []AddressSummaryData
-			err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
-			if err != nil {
-				fmt.Println("error is:", err)
-				return nil, err
-			}
-			if len(responseData) > 0 {
-				data := responseData[0]
-				balance, _ := new(big.Int).SetString(data.Balance, 10)
-				balanceItems = append(balanceItems,
-					account.Balance{
-						Account:    data.Address,
-						Balance:    (*common.BigInt)(balance),
-						BalanceStr: data.Balance,
-						Symbol:     data.BalanceSymbol})
-			}
-		}
-		result = &account.GetAccountBalanceResponse{
-			BalanceList: balanceItems,
-		}
-	} else {
+	if request.TokenType == "contract" {
 		if len(request.Account) > 1 {
 			apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance-multi?chainShortName=%s&address=%s", request.ChainShortName, accountStr)
 			if request.ProtocolType != "" {
@@ -288,7 +245,10 @@ func (cea *ChainExplorerAdaptor) GetAccountBalanceV2(request *account.GetAccount
 				}
 			}
 		} else {
-			apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance?chainShortName=%s&address=%s&protocolType=%s&tokenContractAddress=%s", request.ChainShortName, accountStr, request.ProtocolType, request.ContractAddress)
+			apiUrl := fmt.Sprintf("api/v5/explorer/address/token-balance?chainShortName=%s&address=%s&protocolType=%s", request.ChainShortName, accountStr, request.ProtocolType)
+			if request.ContractAddress != "" {
+				apiUrl += fmt.Sprintf("&tokenContractAddress=%s", request.ContractAddress)
+			}
 			if request.Page != "" {
 				apiUrl += fmt.Sprintf("&page=%s", request.Page)
 			}
@@ -323,6 +283,63 @@ func (cea *ChainExplorerAdaptor) GetAccountBalanceV2(request *account.GetAccount
 					BalanceList: balanceItems,
 				}
 			}
+		}
+	} else {
+		var balanceItems []account.Balance
+		if len(request.Account) > 1 {
+			apiUrl := fmt.Sprintf("api/v5/explorer/address/balance-multi?chainShortName=%s&address=%s", request.ChainShortName, accountStr)
+			var responseData []AddressBalanceMultiData
+			err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
+			if err != nil {
+				return nil, err
+			}
+			if len(responseData) > 0 {
+				data := responseData[0]
+				for _, value := range data.BalanceList {
+					balance, _ := new(big.Int).SetString(value.Balance, 10)
+					balanceItems = append(balanceItems,
+						account.Balance{
+							Account:    value.Address,
+							Balance:    (*common.BigInt)(balance),
+							BalanceStr: value.Balance,
+							Symbol:     data.Symbol})
+				}
+			} else {
+				balanceItems = append(balanceItems,
+					account.Balance{
+						Account:    "",
+						Balance:    (*common.BigInt)(big.NewInt(0)),
+						BalanceStr: "0",
+						Symbol:     ""})
+			}
+		} else {
+			apiUrl := fmt.Sprintf("api/v5/explorer/address/address-summary?chainShortName=%s&address=%s", request.ChainShortName, accountStr)
+			var responseData []AddressSummaryData
+			err := cea.baseClient.Call("oklink", "", "", apiUrl, nil, &responseData)
+			if err != nil {
+				fmt.Println("error is:", err)
+				return nil, err
+			}
+			if len(responseData) > 0 {
+				data := responseData[0]
+				balance, _ := new(big.Int).SetString(data.Balance, 10)
+				balanceItems = append(balanceItems,
+					account.Balance{
+						Account:    data.Address,
+						Balance:    (*common.BigInt)(balance),
+						BalanceStr: data.Balance,
+						Symbol:     data.BalanceSymbol})
+			} else {
+				balanceItems = append(balanceItems,
+					account.Balance{
+						Account:    "",
+						Balance:    (*common.BigInt)(big.NewInt(0)),
+						BalanceStr: "0",
+						Symbol:     ""})
+			}
+		}
+		result = &account.GetAccountBalanceResponse{
+			BalanceList: balanceItems,
 		}
 	}
 	return result, nil

@@ -1,6 +1,7 @@
 package tests
 
 import (
+	"encoding/json"
 	"fmt"
 	"testing"
 
@@ -56,14 +57,15 @@ func TestOklinkGetNFTDetails(t *testing.T) {
 	trps := &token.GetNFTDetailsRequest{
 		ExplorerName:    "oklink",
 		ChainShortName:  "ETH",
-		ContractAddress: "0xed5af388653567af2f388e6224dc7c4b3241c544",
-		TokenId:         "5401",
+		ContractAddress: "0xf39c410dac956ba98004f411e182fb4eed595270",
+		TokenId:         "956",
 	}
 	okResp, err := oklinkClient.GetNFTDetails(trps)
 	if err != nil {
 		t.Error(err)
 	}
 	fmt.Println("=========okRespList=============")
-	fmt.Println(okResp)
+	jsonBytes, _ := json.Marshal(okResp)
+	fmt.Printf("%s\n", string(jsonBytes))
 	fmt.Println("===========okRespList===========")
 }
